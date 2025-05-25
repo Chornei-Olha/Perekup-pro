@@ -1,7 +1,5 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 type SessionInfo = {
   session_status: "created" | "confirmed";
@@ -16,7 +14,9 @@ type SessionInfo = {
 
 export function useSessionInfo() {
   const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<SessionInfo | null>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -31,33 +31,33 @@ export function useSessionInfo() {
         });
 
         if (res.status === 403) {
-          router.replace("/login"); // не залогинен
+          router.replace("/login");
           return;
         }
 
         const data: SessionInfo = await res.json();
 
         if (data.session_status === "created") {
-          router.replace("/login"); // не подтвердил код
+          router.replace("/login");
           return;
         }
 
-        if (!data.subscription?.is_active) {
-          router.replace("/subscription"); // нет активной подписки
+        if (!data.subscription?.is_active && pathname !== "/subscription") {
+          router.replace("/subscription");
           return;
         }
 
-        // всё ок, доступ разрешён
+        setSession(data);
       } catch (error) {
         console.error("Ошибка проверки сессии:", error);
-        router.replace("/login"); // fallback на всякий случай
+        router.replace("/login");
       } finally {
         setLoading(false);
       }
     };
 
     checkSession();
-  }, [router]);
+  }, [router, pathname]);
 
-  return { loading };
+  return { session, loading };
 }
