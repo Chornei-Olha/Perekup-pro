@@ -23,21 +23,39 @@ export default function SubscriptionPage() {
   useEffect(() => {
     const fetchPlans = async () => {
       try {
+        // Спочатку отримуємо user info, щоб дістати номер
+        const userRes = await fetch("/api/v1/user/info", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
+        });
+
+        if (!userRes.ok)
+          throw new Error("Не вдалося отримати дані користувача");
+        const userData = await userRes.json();
+        const userPhone = userData?.phone;
+
+        if (!userPhone) throw new Error("Не вказано номер телефону");
+
+        // Потім отримуємо плани з номером
         const res = await fetch("/api/v1/plans", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_phone: "+380985411740" }), // можно заменить на динамический
+          body: JSON.stringify({ user_phone: userPhone }),
         });
 
-        if (!res.ok) throw new Error("Ошибка запроса");
+        if (!res.ok) throw new Error("Помилка при отриманні тарифів");
 
         const data = await res.json();
-        if (!Array.isArray(data)) throw new Error("Неверный формат ответа");
+        if (!Array.isArray(data)) throw new Error("Невірний формат тарифів");
 
         setPlans(data);
       } catch (err) {
         console.error(err);
-        setError("Не удалось загрузить тарифы");
+        setError("Не вдалося завантажити тарифні плани");
       } finally {
         setLoading(false);
       }
@@ -170,7 +188,6 @@ export default function SubscriptionPage() {
     <main className="w-full min-h-screen bg-gradient-to-br from-[#8B0000] to-black text-white">
       <Header />
       <section className="max-w-6xl mx-auto py-4 px-4">
-        {/* 👉 Кнопка 1 день бесплатно */}
         <div className="flex justify-center mb-6">
           <button
             onClick={handleTryFree}
@@ -213,7 +230,6 @@ export default function SubscriptionPage() {
           </div>
         )}
 
-        {/* Footer Note */}
         <p className="font-['Inter'] font-extralight text-left text-[#EFEFEF] text-[20px] sm:text-[32px]">
           После оплаты пришлите почту или вайбер
         </p>
