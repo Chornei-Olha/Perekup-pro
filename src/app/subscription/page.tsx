@@ -46,6 +46,65 @@ export default function SubscriptionPage() {
     fetchPlans();
   }, []);
 
+  useEffect(() => {
+    const checkSubscription = async () => {
+      try {
+        const res = await fetch("/api/v1/user/info", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.subscription?.is_active) {
+            router.push("/search");
+          } else {
+            let attempts = 0;
+            pollingRef.current = setInterval(async () => {
+              attempts++;
+              try {
+                const pollRes = await fetch("/api/v1/user/info", {
+                  method: "POST",
+                  credentials: "include",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({}),
+                });
+
+                if (pollRes.ok) {
+                  const pollData = await pollRes.json();
+                  if (pollData.subscription?.is_active) {
+                    clearInterval(pollingRef.current!);
+                    router.push("/search");
+                  }
+                }
+              } catch (err) {
+                console.error("Ошибка при опросе подписки", err);
+              }
+
+              if (attempts >= 24) {
+                clearInterval(pollingRef.current!);
+              }
+            }, 5000);
+          }
+        }
+      } catch (err) {
+        console.error("Ошибка при первичной проверке подписки", err);
+      }
+    };
+
+    checkSubscription();
+
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, []);
+
   const handleTryFree = async () => {
     try {
       const res = await fetch("/api/v1/user/info", {
