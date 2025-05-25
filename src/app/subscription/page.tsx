@@ -1,3 +1,110 @@
+// "use client";
+
+// import Header from "@/app/components/Header";
+// import { useEffect, useState, useRef } from "react";
+// import { useRouter } from "next/navigation";
+
+// interface Plan {
+//   id: number;
+//   price: number;
+//   duration: string;
+//   duration_description: string;
+//   description: string;
+//   payment_url: string;
+// }
+
+// export default function SubscriptionPage() {
+//   const router = useRouter();
+//   const [plans, setPlans] = useState<Plan[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+//   const pollingRef = useRef<NodeJS.Timeout | null>(null);
+
+//   useEffect(() => {
+//     const fetchPlans = async () => {
+//       try {
+//         const res = await fetch("/api/v1/plans", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ user_phone: "+380985411740" }), // можно заменить на динамический
+//         });
+
+//         if (!res.ok) throw new Error("Ошибка запроса");
+
+//         const data = await res.json();
+//         if (!Array.isArray(data)) throw new Error("Неверный формат ответа");
+
+//         setPlans(data);
+//       } catch (err) {
+//         console.error(err);
+//         setError("Не удалось загрузить тарифы");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchPlans();
+//   }, []);
+
+//   useEffect(() => {
+//     const checkSubscription = async () => {
+//       try {
+//         const res = await fetch("/api/v1/user/info", {
+//           method: "POST",
+//           credentials: "include",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({}),
+//         });
+
+//         if (res.ok) {
+//           const data = await res.json();
+//           if (data.subscription?.is_active) {
+//             router.push("/search");
+//           } else {
+//             let attempts = 0;
+//             pollingRef.current = setInterval(async () => {
+//               attempts++;
+//               try {
+//                 const pollRes = await fetch("/api/v1/user/info", {
+//                   method: "POST",
+//                   credentials: "include",
+//                   headers: {
+//                     "Content-Type": "application/json",
+//                   },
+//                   body: JSON.stringify({}),
+//                 });
+
+//                 if (pollRes.ok) {
+//                   const pollData = await pollRes.json();
+//                   if (pollData.subscription?.is_active) {
+//                     clearInterval(pollingRef.current!);
+//                     router.push("/search");
+//                   }
+//                 }
+//               } catch (err) {
+//                 console.error("Ошибка при опросе подписки", err);
+//               }
+
+//               if (attempts >= 24) {
+//                 clearInterval(pollingRef.current!);
+//               }
+//             }, 5000);
+//           }
+//         }
+//       } catch (err) {
+//         console.error("Ошибка при первичной проверке подписки", err);
+//       }
+//     };
+
+//     checkSubscription();
+
+//     return () => {
+//       if (pollingRef.current) clearInterval(pollingRef.current);
+//     };
+//   }, []);
+
 "use client";
 
 import Header from "@/app/components/Header";
@@ -18,51 +125,8 @@ export default function SubscriptionPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [userPhone, setUserPhone] = useState<string | null>(null);
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        // Спочатку отримуємо user info, щоб дістати номер
-        const userRes = await fetch("/api/v1/user/info", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({}),
-        });
-
-        if (!userRes.ok)
-          throw new Error("Не вдалося отримати дані користувача");
-        const userData = await userRes.json();
-        const userPhone = userData?.phone;
-
-        if (!userPhone) throw new Error("Не вказано номер телефону");
-
-        // Потім отримуємо плани з номером
-        const res = await fetch("/api/v1/plans", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_phone: userPhone }),
-        });
-
-        if (!res.ok) throw new Error("Помилка при отриманні тарифів");
-
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error("Невірний формат тарифів");
-
-        setPlans(data);
-      } catch (err) {
-        console.error(err);
-        setError("Не вдалося завантажити тарифні плани");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlans();
-  }, []);
 
   useEffect(() => {
     const checkSubscription = async () => {
@@ -78,6 +142,8 @@ export default function SubscriptionPage() {
 
         if (res.ok) {
           const data = await res.json();
+          setUserPhone(data.user_phone); // <-- сохраняем номер телефона
+
           if (data.subscription?.is_active) {
             router.push("/search");
           } else {
@@ -121,7 +187,38 @@ export default function SubscriptionPage() {
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current);
     };
-  }, []);
+  }, [router]);
+
+  // Загружаем тарифы после того, как получим телефон
+  useEffect(() => {
+    const fetchPlans = async () => {
+      if (!userPhone) return;
+
+      try {
+        const res = await fetch("/api/v1/plans", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_phone: userPhone }),
+        });
+
+        if (!res.ok) throw new Error("Ошибка запроса");
+
+        const data = await res.json();
+        if (!Array.isArray(data)) throw new Error("Неверный формат ответа");
+
+        setPlans(data);
+      } catch (err) {
+        console.error(err);
+        setError("Не удалось загрузить тарифы");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, [userPhone]);
+
+  // Остальной код — без изменений
 
   const handleTryFree = async () => {
     try {
@@ -188,6 +285,7 @@ export default function SubscriptionPage() {
     <main className="w-full min-h-screen bg-gradient-to-br from-[#8B0000] to-black text-white">
       <Header />
       <section className="max-w-6xl mx-auto py-4 px-4">
+        {/* 👉 Кнопка 1 день бесплатно */}
         <div className="flex justify-center mb-6">
           <button
             onClick={handleTryFree}
@@ -230,6 +328,7 @@ export default function SubscriptionPage() {
           </div>
         )}
 
+        {/* Footer Note */}
         <p className="font-['Inter'] font-extralight text-left text-[#EFEFEF] text-[20px] sm:text-[32px]">
           После оплаты пришлите почту или вайбер
         </p>
