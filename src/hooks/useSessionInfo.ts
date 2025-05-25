@@ -43,7 +43,7 @@ export function useSessionInfo() {
         }
 
         if (!data.subscription?.is_active) {
-          router.replace("/subscribe"); // нет активной подписки
+          router.replace("/subscription"); // нет активной подписки
           return;
         }
 

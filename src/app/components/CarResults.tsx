@@ -60,7 +60,7 @@ export default function CarResults({ results }: Props) {
                       {getGearboxLabel(car.gearbox)} • {car.fuel}
                     </p>
                     <p className="text-sm text-white">{car.city}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-200">
                       Днів у продажу: {car.daysInSale}
                     </p>
                   </div>
@@ -76,7 +76,7 @@ export default function CarResults({ results }: Props) {
                     </div>
                   </div>
                 </div>
-                <p className="text-sm text-gray-400 mt-2 max-h-20 overflow-hidden text-ellipsis line-clamp-3">
+                <p className="text-sm text-gray-200 mt-2 max-h-20 overflow-hidden text-ellipsis line-clamp-3">
                   {car.description}
                 </p>
               </div>

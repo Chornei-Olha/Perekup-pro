@@ -404,7 +404,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       <label className="font-['Inter'] font-medium block mb-1">{label}</label>
       <Listbox value={selected} onChange={setSelected}>
         <div className="relative">
-          <ListboxButton className="w-full border p-2 rounded text-left bg-white">
+          <ListboxButton className="w-full border p-2 rounded text-left bg-transparent">
             {selected?.name || `Выберите ${label.toLowerCase()}`}
             <ChevronUpDownIcon className="h-5 w-5 absolute right-2 top-2.5 text-gray-400" />
           </ListboxButton>
