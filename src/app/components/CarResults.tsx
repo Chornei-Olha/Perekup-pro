@@ -38,6 +38,7 @@ export default function CarResults({ results }: Props) {
                   className="    width=full
                   height=full
                   object-cover"
+                  loading="lazy"
                 />
               </div>
 
