@@ -325,6 +325,22 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
   const [selectedModel, setSelectedModel] = useState<Option | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<Option | null>(null);
 
+  const [selectedGearbox, setSelectedGearbox] = useState<Option | null>(null);
+  const [selectedFuel, setSelectedFuel] = useState<Option | null>(null);
+
+  const gearboxOptions: Option[] = [
+    { id: 0, name: "Механіка" },
+    { id: 1, name: "Автомат" },
+  ];
+
+  const fuelOptions: Option[] = [
+    { id: 0, name: "Бензин" },
+    { id: 1, name: "Дизель" },
+    { id: 2, name: "Електро" },
+    { id: 3, name: "Гібрид" },
+    { id: 4, name: "Інше" },
+  ];
+
   useEffect(() => {
     fetch("/api/regions")
       .then((res) => res.json())
@@ -372,12 +388,15 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       maxEngineVolume: Number(formData.get("maxEngine")) || undefined,
       minMileage: Number(formData.get("minMileage")) || undefined,
       maxMileage: Number(formData.get("maxMileage")) || undefined,
-      gearbox:
-        formData.get("gearbox") !== ""
-          ? Number(formData.get("gearbox"))
-          : undefined,
-      fuel:
-        formData.get("fuel") !== "" ? Number(formData.get("fuel")) : undefined,
+      gearbox: selectedGearbox ? selectedGearbox.id : undefined,
+      fuel: selectedFuel ? selectedFuel.id : undefined,
+
+      // gearbox:
+      //   formData.get("gearbox") !== ""
+      //     ? Number(formData.get("gearbox"))
+      //     : undefined,
+      // fuel:
+      //   formData.get("fuel") !== "" ? Number(formData.get("fuel")) : undefined,
       paint: formData.get("paint") === "on",
       transfer: formData.get("transfer") === "on",
       sold: formData.get("sold") === "on",
@@ -446,7 +465,22 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
           )}
           {renderListbox("Регион", regions, selectedRegion, setSelectedRegion)}
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-4">
+            {renderListbox(
+              "КПП",
+              gearboxOptions,
+              selectedGearbox,
+              setSelectedGearbox
+            )}
+            {renderListbox(
+              "Паливо",
+              fuelOptions,
+              selectedFuel,
+              setSelectedFuel
+            )}
+          </div>
+
+          {/* <div className="grid grid-cols-2 gap-2">
             <select name="gearbox" className="border p-2 rounded">
               <option value="">КПП</option>
               <option value="0">Механіка</option>
@@ -460,7 +494,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               <option value="3">Гібрид</option>
               <option value="4">Інше</option>
             </select>
-          </div>
+          </div> */}
 
           <label className="font-['Inter'] font-medium block mb-1">
             % отклонения
