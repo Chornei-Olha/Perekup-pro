@@ -103,7 +103,7 @@ export default function CarResults({ results }: Props) {
           return (
             <div
               key={car.id}
-              className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition p-4 grid grid-cols-[150px_1fr_120px_2fr] gap-4 items-start sm:flex-row flex-col"
+              className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition p-4 grid grid-cols-[150px_1fr_120px_2fr] gap-4 items-start sm:flex-col md:flex-row flex-col"
             >
               {/* 1. Фото */}
               <div className="w-[150px] h-[100px] flex-shrink-0">
@@ -162,9 +162,9 @@ export default function CarResults({ results }: Props) {
                         console.warn("sellerId отсутствует для машины", car);
                       }
                     }}
-                    className="mt-1 text-xs px-2 py-1 rounded bg-green-300 text-green-900"
+                    className="mt-1 text-xs px-2 py-1 rounded bg-green-200 text-green-900"
                   >
-                    ({car.sellerCarCount})
+                    {car.sellerCarCount}
                   </button>
                 </div>
               </div>
