@@ -17,6 +17,14 @@ interface CarSearchFormProps {
 }
 
 const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
+  const periodOptions: Option[] = [
+    { id: 0, name: "Весь период" },
+    { id: 1, name: "1 день" },
+    { id: 3, name: "3 дня" },
+    { id: 7, name: "7 дней" },
+    { id: 30, name: "30 дней" },
+  ];
+
   const [regions, setRegions] = useState<Option[]>([]);
   const [brands, setBrands] = useState<Option[]>([]);
   const [models, setModels] = useState<Option[]>([]);
@@ -42,14 +50,6 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     { id: 2, name: "Электро" },
     { id: 3, name: "Гибрид" },
     { id: 4, name: "Другой" },
-  ];
-
-  const periodOptions: Option[] = [
-    { id: 0, name: "Весь период" },
-    { id: 1, name: "1 день" },
-    { id: 3, name: "3 дня" },
-    { id: 7, name: "7 дней" },
-    { id: 30, name: "30 дней" },
   ];
 
   useEffect(() => {
