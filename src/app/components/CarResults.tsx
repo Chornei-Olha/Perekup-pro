@@ -27,7 +27,11 @@ export default function CarResults({ results }: Props) {
   const totalPages = Math.ceil(results.length / itemsPerPage);
   const listRef = useRef<HTMLDivElement>(null); // 👈 Реф на список
 
-  const paginatedResults = results.slice(
+  const sortedResults = [...results].sort((a, b) => {
+    return new Date(b.lastUpdate).getTime() - new Date(a.lastUpdate).getTime();
+  });
+
+  const paginatedResults = sortedResults.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
