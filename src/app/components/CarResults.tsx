@@ -92,13 +92,35 @@ export default function CarResults({ results }: Props) {
   const [sellerCars, setSellerCars] = useState<Car[]>([]);
   const [isLoadingSellerCars, setIsLoadingSellerCars] = useState(false);
 
+  // useEffect(() => {
+  //   if (selectedSellerId !== null) {
+  //     setIsLoadingSellerCars(true);
+  //     fetch(`/api/cars?sellerId=${selectedSellerId}`)
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         setSellerCars(data);
+  //         setIsLoadingSellerCars(false);
+  //       });
+  //   }
+  // }, [selectedSellerId]);
   useEffect(() => {
     if (selectedSellerId !== null) {
       setIsLoadingSellerCars(true);
       fetch(`/api/cars?sellerId=${selectedSellerId}`)
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`Ошибка сервера: ${res.status}`);
+          }
+          return res.json();
+        })
         .then((data) => {
+          console.log("Данные по продавцу", selectedSellerId, data);
           setSellerCars(data);
+          setIsLoadingSellerCars(false);
+        })
+        .catch((error) => {
+          console.error("Ошибка при загрузке машин продавца", error);
+          setSellerCars([]);
           setIsLoadingSellerCars(false);
         });
     }
@@ -202,8 +224,20 @@ export default function CarResults({ results }: Props) {
                     {formatDate(car.lastUpdate)}
                   </span>
                   <br />
-                  <button
+                  {/* <button
                     onClick={() => setSelectedSellerId(car.sellerId!)}
+                    className="mt-1 text-xs text-blue-500 underline"
+                  >
+                    Показать все ({car.sellerCarCount})
+                  </button> */}
+                  <button
+                    onClick={() => {
+                      if (car.sellerId != null) {
+                        setSelectedSellerId(car.sellerId);
+                      } else {
+                        console.warn("sellerId отсутствует для машины", car);
+                      }
+                    }}
                     className="mt-1 text-xs text-blue-500 underline"
                   >
                     Показать все ({car.sellerCarCount})
