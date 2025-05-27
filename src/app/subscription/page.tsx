@@ -232,10 +232,9 @@ export default function SubscriptionPage() {
           </div>
         )}
 
-        {/* Footer Note */}
-        <p className="font-['Inter'] font-extralight text-left text-[#EFEFEF] text-[20px] sm:text-[32px]">
+        {/* <p className="font-['Inter'] font-extralight text-left text-[#EFEFEF] text-[20px] sm:text-[32px]">
           После оплаты пришлите почту или вайбер
-        </p>
+        </p> */}
       </section>
     </main>
   );
