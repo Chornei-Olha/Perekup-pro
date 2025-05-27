@@ -106,7 +106,7 @@ export default function CarResults({ results }: Props) {
               className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition p-4 grid grid-cols-1 sm:grid-cols-[150px_1fr_120px_2fr] gap-4 items-start"
             >
               {/* 1. Фото */}
-              <div className="w-[150px] h-[100px] flex-shrink-0">
+              <div className="sm:w-full md:w-[150px] h-[100px] flex-shrink-0">
                 <img
                   src={car.image}
                   alt={car.title}
