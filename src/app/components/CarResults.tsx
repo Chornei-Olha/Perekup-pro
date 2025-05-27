@@ -164,7 +164,7 @@ export default function CarResults({ results }: Props) {
                     }}
                     className="mt-1 text-xs px-2 py-1 rounded bg-green-200 text-green-900 pointer"
                   >
-                    Авто продавца{" "}
+                    Авто продавца ▸{" "}
                   </button>
                 </div>
               </div>
