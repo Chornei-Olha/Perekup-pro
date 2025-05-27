@@ -455,7 +455,7 @@ export default function Home() {
                     E-mail
                   </span>
                   <span className="font-['Open_Sans'] font-light text-white/75 hover:underline">
-                    pekekuppro7@gmail.com
+                    perekuppro7@gmail.com
                   </span>
                 </a>
               </div>
