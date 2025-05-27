@@ -30,7 +30,10 @@ export default function CarResults({ results }: Props) {
   const sortedResults = [...results].sort((a, b) => {
     return new Date(b.lastUpdate).getTime() - new Date(a.lastUpdate).getTime();
   });
-
+  console.log(
+    "Пример дат из бэка:",
+    sortedResults.slice(0, 5).map((car) => car.lastUpdate)
+  );
   const paginatedResults = sortedResults.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
