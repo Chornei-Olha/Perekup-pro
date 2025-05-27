@@ -147,9 +147,10 @@ export default function Home() {
           <div className="container mx-auto flex">
             <div className="bg-[#FF001D] rounded-2xl m-4 sm:m-3 p-6 sm:p-8 text-white max-w-[600px] h-[250px] shadow-lg relative">
               <p className="font-['Open_Sans'] font-regular text-[12px] sm:text-[14px] mb-15">
-                Выбрать и купить новый автомобиль на PEREKUP можно достаточно
-                просто и быстро — благодаря удобному подбору авто по параметрам,
-                сервису сравнения автомобилей и интуитивно простой навигации.
+                Выбрать и купить новый автомобиль на PEREKUP-PRO можно
+                достаточно просто и быстро — благодаря удобному подбору авто по
+                параметрам, сервису сравнения автомобилей и интуитивно простой
+                навигации.
               </p>
               <button
                 onClick={handleClick}
