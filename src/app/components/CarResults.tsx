@@ -107,7 +107,7 @@ export default function CarResults({ results }: Props) {
     if (selectedSellerId !== null) {
       setIsLoadingSellerCars(true);
       fetch(`https://perecup-pro.com/api/api/cars`, {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
