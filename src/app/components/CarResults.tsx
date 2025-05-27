@@ -107,7 +107,7 @@ export default function CarResults({ results }: Props) {
     if (selectedSellerId !== null) {
       setIsLoadingSellerCars(true);
       fetch(`/api/cars`, {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
