@@ -162,9 +162,9 @@ export default function CarResults({ results }: Props) {
                         console.warn("sellerId отсутствует для машины", car);
                       }
                     }}
-                    className="mt-1 text-xs text-blue-500 underline"
+                    className="mt-1 text-xs px-2 py-1 rounded bg-green-300 text-green-900"
                   >
-                    Показать все ({car.sellerCarCount})
+                    ({car.sellerCarCount})
                   </button>
                 </div>
               </div>
@@ -268,7 +268,7 @@ export default function CarResults({ results }: Props) {
           <div className="bg-white max-w-3xl w-full rounded-lg shadow-lg p-6 overflow-y-auto max-h-[80vh]">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-black">
-                Объявления продавца #{selectedSellerId}
+                Объявления продавца
               </h2>
               <button
                 onClick={closeModal}
