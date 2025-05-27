@@ -106,7 +106,7 @@ export default function CarResults({ results }: Props) {
   useEffect(() => {
     if (selectedSellerId !== null) {
       setIsLoadingSellerCars(true);
-      fetch(`/api/cars`, {
+      fetch(`https://perecup-pro.com/api/api/cars`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
