@@ -27,7 +27,9 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
 
   const [selectedGearbox, setSelectedGearbox] = useState<Option | null>(null);
   const [selectedFuel, setSelectedFuel] = useState<Option | null>(null);
-  const [period, setPeriod] = useState<number | undefined>(undefined);
+  const [selectedPeriod, setSelectedPeriod] = useState<Option>(
+    periodOptions[0]
+  );
 
   const gearboxOptions: Option[] = [
     { id: 0, name: "Механика" },
@@ -40,6 +42,14 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     { id: 2, name: "Электро" },
     { id: 3, name: "Гибрид" },
     { id: 4, name: "Другой" },
+  ];
+
+  const periodOptions: Option[] = [
+    { id: 0, name: "Весь период" },
+    { id: 1, name: "1 день" },
+    { id: 3, name: "3 дня" },
+    { id: 7, name: "7 дней" },
+    { id: 30, name: "30 дней" },
   ];
 
   useEffect(() => {
@@ -101,7 +111,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
           ? Number(formData.get("state"))
           : undefined,
       marketPriceDeviation: Number(formData.get("deviation")) || 0,
-      period: period !== undefined ? period * 24 : undefined,
+      period: selectedPeriod.id !== 0 ? selectedPeriod.id * 24 : undefined,
     };
 
     onSubmit(data);
@@ -187,17 +197,12 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
             <label className="font-['Inter'] font-medium block mb-1">
               Период, дни
             </label>
-            <select
-              value={period}
-              onChange={(e) => setPeriod(Number(e.target.value) || undefined)}
-              className="border p-2 rounded w-full"
-            >
-              <option value="">Весь период</option>
-              <option value="1">1 день</option>
-              <option value="3">3 дня</option>
-              <option value="7">7 дней</option>
-              <option value="30">30 дней</option>
-            </select>
+            {renderListbox(
+              "Период, дни",
+              periodOptions,
+              selectedPeriod,
+              setSelectedPeriod
+            )}
           </div>
         </div>
 
