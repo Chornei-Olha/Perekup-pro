@@ -329,16 +329,16 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
   const [selectedFuel, setSelectedFuel] = useState<Option | null>(null);
 
   const gearboxOptions: Option[] = [
-    { id: 0, name: "Механіка" },
+    { id: 0, name: "Механика" },
     { id: 1, name: "Автомат" },
   ];
 
   const fuelOptions: Option[] = [
     { id: 0, name: "Бензин" },
     { id: 1, name: "Дизель" },
-    { id: 2, name: "Електро" },
-    { id: 3, name: "Гібрид" },
-    { id: 4, name: "Інше" },
+    { id: 2, name: "Электро" },
+    { id: 3, name: "Гибрид" },
+    { id: 4, name: "Другое" },
   ];
 
   useEffect(() => {
@@ -473,7 +473,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               setSelectedGearbox
             )}
             {renderListbox(
-              "Паливо",
+              "Топливо",
               fuelOptions,
               selectedFuel,
               setSelectedFuel
