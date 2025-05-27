@@ -217,7 +217,7 @@
 
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Car } from "@/lib/types";
 
 type Props = {
@@ -305,6 +305,27 @@ export default function CarResults({ results }: Props) {
     listRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const [selectedSellerId, setSelectedSellerId] = useState<number | null>(null);
+  const [sellerCars, setSellerCars] = useState<Car[]>([]);
+  const [isLoadingSellerCars, setIsLoadingSellerCars] = useState(false);
+
+  useEffect(() => {
+    if (selectedSellerId !== null) {
+      setIsLoadingSellerCars(true);
+      fetch(`/api/cars?sellerId=${selectedSellerId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setSellerCars(data);
+          setIsLoadingSellerCars(false);
+        });
+    }
+  }, [selectedSellerId]);
+
+  const closeModal = () => {
+    setSelectedSellerId(null);
+    setSellerCars([]);
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
       {/* Фильтр по периоду */}
@@ -384,12 +405,26 @@ export default function CarResults({ results }: Props) {
                   {car.price.toLocaleString()}$
                 </p>
                 <p className={`text-sm ${diff.color}`}>{diff.formatted}</p>
+                {/* <div className="mt-1">
+                  <span className="inline-block text-xs px-2 py-1 rounded bg-gray-200 text-green-900">
+                    Обновлено:
+                    <br />
+                    {formatDate(car.lastUpdate)}
+                  </span>
+                </div> */}
                 <div className="mt-1">
                   <span className="inline-block text-xs px-2 py-1 rounded bg-gray-200 text-green-900">
                     Обновлено:
                     <br />
                     {formatDate(car.lastUpdate)}
                   </span>
+                  <br />
+                  <button
+                    onClick={() => setSelectedSellerId(car.sellerId)}
+                    className="mt-1 text-xs text-blue-500 underline"
+                  >
+                    Показать все ({car.sellerCarCount})
+                  </button>
                 </div>
               </div>
 
@@ -484,6 +519,49 @@ export default function CarResults({ results }: Props) {
             >
               OK
             </button>
+          </div>
+        </div>
+      )}
+      {selectedSellerId !== null && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white max-w-3xl w-full rounded-lg shadow-lg p-6 overflow-y-auto max-h-[80vh]">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">
+                Объявления продавца #{selectedSellerId}
+              </h2>
+              <button
+                onClick={closeModal}
+                className="text-gray-600 hover:text-black text-sm"
+              >
+                ✕ Закрыть
+              </button>
+            </div>
+
+            {isLoadingSellerCars ? (
+              <p>Загрузка...</p>
+            ) : sellerCars.length === 0 ? (
+              <p>Объявления не найдены.</p>
+            ) : (
+              <ul className="grid gap-3">
+                {sellerCars.map((car) => (
+                  <li key={car.id} className="border rounded p-3">
+                    <a
+                      href={car.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 font-medium hover:underline"
+                    >
+                      {car.title}
+                    </a>
+                    <p className="text-sm text-gray-600">
+                      {car.year} • {car.mileage.toLocaleString()} км •{" "}
+                      {getGearboxLabel(car.gearbox)} •{" "}
+                      {car.price.toLocaleString()}$
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       )}
