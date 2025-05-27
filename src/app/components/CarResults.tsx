@@ -106,7 +106,15 @@ export default function CarResults({ results }: Props) {
   useEffect(() => {
     if (selectedSellerId !== null) {
       setIsLoadingSellerCars(true);
-      fetch(`/api/cars?sellerId=${selectedSellerId}`)
+      fetch(`/api/cars`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sellerId: selectedSellerId,
+        }),
+      })
         .then((res) => {
           if (!res.ok) {
             throw new Error(`Ошибка сервера: ${res.status}`);
