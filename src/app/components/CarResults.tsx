@@ -288,13 +288,12 @@ export default function CarResults({ results }: Props) {
   //         const updateDate = new Date(car.lastUpdate);
   //         return updateDate >= getThresholdDate(periodFilter);
   //       });
+  const sortedResults = [...results].sort(
+    (a, b) =>
+      new Date(b.lastUpdate).getTime() - new Date(a.lastUpdate).getTime()
+  );
 
-  // const sortedResults = [...filteredResults].sort(
-  //   (a, b) =>
-  //     new Date(b.lastUpdate).getTime() - new Date(a.lastUpdate).getTime()
-  // );
-
-  const paginatedResults = results.slice(
+  const paginatedResults = sortedResults.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
