@@ -70,7 +70,7 @@ export default function Top50Slider() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h3 className="font-semibold text-center mt-4">
+                  <h3 className="font-semibold text-center mt-4 text-black">
                     {car.title}
                   </h3>
                   <p className="text-sm text-gray-600 mb-1">{car.year}</p>
