@@ -194,9 +194,6 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
           />
 
           <div className="mt-4">
-            <label className="font-['Inter'] font-medium block mb-1">
-              Период, дни
-            </label>
             {renderListbox(
               "Период, дни",
               periodOptions,
