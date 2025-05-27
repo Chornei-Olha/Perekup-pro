@@ -110,7 +110,7 @@ export default function CarResults({ results }: Props) {
                 <img
                   src={car.image}
                   alt={car.title}
-                  className="w-full h-full object-cover rounded"
+                  className="{w-full} h-{150} object-cover rounded"
                   loading="lazy"
                 />
               </div>
