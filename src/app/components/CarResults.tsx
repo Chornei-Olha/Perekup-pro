@@ -32,45 +32,11 @@ function formatDate(dateString: string) {
 export default function CarResults({ results }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [inputPage, setInputPage] = useState("");
-  // const [periodFilter, setPeriodFilter] = useState("all");
   const itemsPerPage = 20;
   const listRef = useRef<HTMLDivElement>(null);
 
   const totalPages = Math.ceil(results.length / itemsPerPage);
-  // const now = new Date();
 
-  // const getThresholdDate = (filter: string) => {
-  //   const date = new Date();
-  //   switch (filter) {
-  //     case "1h":
-  //       date.setHours(now.getHours() - 1);
-  //       break;
-  //     case "3h":
-  //       date.setHours(now.getHours() - 3);
-  //       break;
-  //     case "1d":
-  //       date.setDate(now.getDate() - 1);
-  //       break;
-  //     case "3d":
-  //       date.setDate(now.getDate() - 3);
-  //       break;
-  //     case "1w":
-  //       date.setDate(now.getDate() - 7);
-  //       break;
-  //     case "1m":
-  //       date.setMonth(now.getMonth() - 1);
-  //       break;
-  //   }
-  //   return date;
-  // };
-
-  // const filteredResults =
-  //   periodFilter === "all"
-  //     ? results
-  //     : results.filter((car) => {
-  //         const updateDate = new Date(car.lastUpdate);
-  //         return updateDate >= getThresholdDate(periodFilter);
-  //       });
   const sortedResults = [...results].sort(
     (a, b) =>
       new Date(b.lastUpdate).getTime() - new Date(a.lastUpdate).getTime()
@@ -92,17 +58,6 @@ export default function CarResults({ results }: Props) {
   const [sellerCars, setSellerCars] = useState<Car[]>([]);
   const [isLoadingSellerCars, setIsLoadingSellerCars] = useState(false);
 
-  // useEffect(() => {
-  //   if (selectedSellerId !== null) {
-  //     setIsLoadingSellerCars(true);
-  //     fetch(`/api/cars?sellerId=${selectedSellerId}`)
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         setSellerCars(data);
-  //         setIsLoadingSellerCars(false);
-  //       });
-  //   }
-  // }, [selectedSellerId]);
   useEffect(() => {
     if (selectedSellerId !== null) {
       setIsLoadingSellerCars(true);
@@ -141,34 +96,6 @@ export default function CarResults({ results }: Props) {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
-      {/* Фильтр по периоду */}
-      {/* <div className="flex flex-wrap gap-2 mb-6">
-        {[
-          { label: "Усі", value: "all" },
-          { label: "1 год", value: "1h" },
-          { label: "3 год", value: "3h" },
-          { label: "1 доба", value: "1d" },
-          { label: "3 доби", value: "3d" },
-          { label: "Тиждень", value: "1w" },
-          { label: "Місяць", value: "1m" },
-        ].map(({ label, value }) => (
-          <button
-            key={value}
-            onClick={() => {
-              setPeriodFilter(value);
-              setCurrentPage(1); // сбросить на первую страницу
-            }}
-            className={`px-3 py-1 rounded ${
-              periodFilter === value
-                ? "bg-blue-600 text-white"
-                : "bg-gray-300 text-gray-800"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div> */}
-
       {/* Список машин */}
       <div ref={listRef} className="grid gap-4">
         {paginatedResults.map((car) => {
@@ -218,13 +145,7 @@ export default function CarResults({ results }: Props) {
                   {car.price.toLocaleString()}$
                 </p>
                 <p className={`text-sm ${diff.color}`}>{diff.formatted}</p>
-                {/* <div className="mt-1">
-                  <span className="inline-block text-xs px-2 py-1 rounded bg-gray-200 text-green-900">
-                    Обновлено:
-                    <br />
-                    {formatDate(car.lastUpdate)}
-                  </span>
-                </div> */}
+
                 <div className="mt-1">
                   <span className="inline-block text-xs px-2 py-1 rounded bg-gray-200 text-green-900">
                     Обновлено:
@@ -232,12 +153,7 @@ export default function CarResults({ results }: Props) {
                     {formatDate(car.lastUpdate)}
                   </span>
                   <br />
-                  {/* <button
-                    onClick={() => setSelectedSellerId(car.sellerId!)}
-                    className="mt-1 text-xs text-blue-500 underline"
-                  >
-                    Показать все ({car.sellerCarCount})
-                  </button> */}
+
                   <button
                     onClick={() => {
                       if (car.sellerId != null) {
@@ -351,7 +267,7 @@ export default function CarResults({ results }: Props) {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white max-w-3xl w-full rounded-lg shadow-lg p-6 overflow-y-auto max-h-[80vh]">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">
+              <h2 className="text-xl font-bold color-black">
                 Объявления продавца #{selectedSellerId}
               </h2>
               <button
@@ -384,6 +300,7 @@ export default function CarResults({ results }: Props) {
                           src={car.image}
                           alt={car.title}
                           className="object-cover w-full h-full"
+                          loading="lazy"
                         />
                         <div className="absolute top-2 left-2 bg-blue-700 text-white font-bold px-2 py-1 text-sm rounded">
                           {car.price.toLocaleString()}$
