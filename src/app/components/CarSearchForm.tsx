@@ -101,7 +101,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
           ? Number(formData.get("state"))
           : undefined,
       marketPriceDeviation: Number(formData.get("deviation")) || 0,
-      period,
+      period: period !== undefined ? period * 24 : undefined,
     };
 
     onSubmit(data);
