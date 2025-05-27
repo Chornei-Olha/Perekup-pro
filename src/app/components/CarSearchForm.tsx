@@ -27,6 +27,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
 
   const [selectedGearbox, setSelectedGearbox] = useState<Option | null>(null);
   const [selectedFuel, setSelectedFuel] = useState<Option | null>(null);
+  const [period, setPeriod] = useState<number | undefined>(undefined);
 
   const gearboxOptions: Option[] = [
     { id: 0, name: "Механика" },
@@ -100,7 +101,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
           ? Number(formData.get("state"))
           : undefined,
       marketPriceDeviation: Number(formData.get("deviation")) || 0,
-      period: 180,
+      period,
     };
 
     onSubmit(data);
@@ -181,6 +182,23 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
             type="number"
             className="border p-2 rounded w-full"
           />
+
+          <div className="mt-4">
+            <label className="font-['Inter'] font-medium block mb-1">
+              Период, дни
+            </label>
+            <select
+              value={period}
+              onChange={(e) => setPeriod(Number(e.target.value) || undefined)}
+              className="border p-2 rounded w-full"
+            >
+              <option value="">Весь период</option>
+              <option value="1">1 день</option>
+              <option value="3">3 дня</option>
+              <option value="7">7 дней</option>
+              <option value="30">30 дней</option>
+            </select>
+          </div>
         </div>
 
         <div className="space-y-4 sm:space-y-7 pt-4 pl-4 pr-4 sm:p-8 sm:pt-14 w-full sm:w-xl mx-auto">

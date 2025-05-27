@@ -249,52 +249,52 @@ function formatDate(dateString: string) {
 export default function CarResults({ results }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [inputPage, setInputPage] = useState("");
-  const [periodFilter, setPeriodFilter] = useState("all");
+  // const [periodFilter, setPeriodFilter] = useState("all");
   const itemsPerPage = 20;
   const listRef = useRef<HTMLDivElement>(null);
 
   const totalPages = Math.ceil(results.length / itemsPerPage);
-  const now = new Date();
+  // const now = new Date();
 
-  const getThresholdDate = (filter: string) => {
-    const date = new Date();
-    switch (filter) {
-      case "1h":
-        date.setHours(now.getHours() - 1);
-        break;
-      case "3h":
-        date.setHours(now.getHours() - 3);
-        break;
-      case "1d":
-        date.setDate(now.getDate() - 1);
-        break;
-      case "3d":
-        date.setDate(now.getDate() - 3);
-        break;
-      case "1w":
-        date.setDate(now.getDate() - 7);
-        break;
-      case "1m":
-        date.setMonth(now.getMonth() - 1);
-        break;
-    }
-    return date;
-  };
+  // const getThresholdDate = (filter: string) => {
+  //   const date = new Date();
+  //   switch (filter) {
+  //     case "1h":
+  //       date.setHours(now.getHours() - 1);
+  //       break;
+  //     case "3h":
+  //       date.setHours(now.getHours() - 3);
+  //       break;
+  //     case "1d":
+  //       date.setDate(now.getDate() - 1);
+  //       break;
+  //     case "3d":
+  //       date.setDate(now.getDate() - 3);
+  //       break;
+  //     case "1w":
+  //       date.setDate(now.getDate() - 7);
+  //       break;
+  //     case "1m":
+  //       date.setMonth(now.getMonth() - 1);
+  //       break;
+  //   }
+  //   return date;
+  // };
 
-  const filteredResults =
-    periodFilter === "all"
-      ? results
-      : results.filter((car) => {
-          const updateDate = new Date(car.lastUpdate);
-          return updateDate >= getThresholdDate(periodFilter);
-        });
+  // const filteredResults =
+  //   periodFilter === "all"
+  //     ? results
+  //     : results.filter((car) => {
+  //         const updateDate = new Date(car.lastUpdate);
+  //         return updateDate >= getThresholdDate(periodFilter);
+  //       });
 
-  const sortedResults = [...filteredResults].sort(
-    (a, b) =>
-      new Date(b.lastUpdate).getTime() - new Date(a.lastUpdate).getTime()
-  );
+  // const sortedResults = [...filteredResults].sort(
+  //   (a, b) =>
+  //     new Date(b.lastUpdate).getTime() - new Date(a.lastUpdate).getTime()
+  // );
 
-  const paginatedResults = sortedResults.slice(
+  const paginatedResults = results.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -309,7 +309,7 @@ export default function CarResults({ results }: Props) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
       {/* Фильтр по периоду */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      {/* <div className="flex flex-wrap gap-2 mb-6">
         {[
           { label: "Усі", value: "all" },
           { label: "1 год", value: "1h" },
@@ -334,7 +334,7 @@ export default function CarResults({ results }: Props) {
             {label}
           </button>
         ))}
-      </div>
+      </div> */}
 
       {/* Список машин */}
       <div ref={listRef} className="grid gap-4">
