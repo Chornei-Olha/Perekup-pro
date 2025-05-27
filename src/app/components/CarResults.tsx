@@ -89,7 +89,9 @@ export default function CarResults({ results }: Props) {
                     <p className={`text-sm ${diff.color}`}>{diff.formatted}</p>
                     <div className="mt-1">
                       <span className="inline-block text-xs px-2 py-1 rounded bg-gray-200 text-green-900">
-                        Обновлено:{car.lastUpdate}
+                        Обновлено:
+                        <br />
+                        {car.lastUpdate}
                       </span>
                     </div>
                   </div>
