@@ -420,7 +420,7 @@ export default function CarResults({ results }: Props) {
                   </span>
                   <br />
                   <button
-                    onClick={() => setSelectedSellerId(car.sellerId)}
+                    onClick={() => setSelectedSellerId(car.sellerId!)}
                     className="mt-1 text-xs text-blue-500 underline"
                   >
                     Показать все ({car.sellerCarCount})

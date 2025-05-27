@@ -20,7 +20,7 @@ export type Car = {
   image: string;
   lastUpdate: string;
   model: string;
-  sellerId: number;
+  sellerId?: number;
 };
 
 export interface CarSearchFilters {
@@ -45,5 +45,5 @@ export interface CarSearchFilters {
   state?: number;
   marketPriceDeviation?: number;
   period?: number;
-  sellerId: number;
+  sellerId?: number;
 }
