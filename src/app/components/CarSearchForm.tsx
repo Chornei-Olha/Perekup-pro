@@ -34,14 +34,11 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
   ];
 
   const fuelOptions: Option[] = [
-    { id: 0, name: "Любой" },
-    { id: 1, name: "Бензин" },
-    { id: 2, name: "Дизель" },
-    { id: 3, name: "Электро" },
-    { id: 4, name: "Гибрид" },
-    { id: 5, name: "Газ" },
-    { id: 6, name: "Газ/Бензин" },
-    { id: 7, name: "Другой" },
+    { id: 0, name: "Бензин" },
+    { id: 1, name: "Дизель" },
+    { id: 2, name: "Электро" },
+    { id: 3, name: "Гибрид" },
+    { id: 4, name: "Другой" },
   ];
 
   useEffect(() => {
@@ -175,7 +172,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               setSelectedFuel
             )}
           </div>
-          
+
           <label className="font-['Inter'] font-medium block mb-1">
             % отклонения
           </label>
