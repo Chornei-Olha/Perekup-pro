@@ -20,6 +20,15 @@ function getPriceDiff(price: number, marketPrice: number) {
   };
 }
 
+function formatDate(isoDate: string) {
+  const date = new Date(isoDate);
+  return date.toLocaleDateString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
 export default function CarResults({ results }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [inputPage, setInputPage] = useState("");
@@ -30,10 +39,7 @@ export default function CarResults({ results }: Props) {
   const sortedResults = [...results].sort((a, b) => {
     return new Date(b.lastUpdate).getTime() - new Date(a.lastUpdate).getTime();
   });
-  console.log(
-    "Пример дат из бэка:",
-    sortedResults.slice(0, 5).map((car) => car.lastUpdate)
-  );
+
   const paginatedResults = sortedResults.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -98,7 +104,7 @@ export default function CarResults({ results }: Props) {
                       <span className="inline-block text-xs px-2 py-1 rounded bg-gray-200 text-green-900">
                         Обновлено:
                         <br />
-                        {car.lastUpdate}
+                        {formatDate(car.lastUpdate)}
                       </span>
                     </div>
                   </div>
