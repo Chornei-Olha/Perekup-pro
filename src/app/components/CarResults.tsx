@@ -97,58 +97,54 @@ export default function CarResults({ results }: Props) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
       {/* Список машин */}
-      <div ref={listRef} className="grid gap-4">
+      <div ref={listRef} className="grid">
         {paginatedResults.map((car) => {
           const diff = getPriceDiff(car.price, car.marketPrice);
           return (
             <div
               key={car.id}
-              className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition p-4 grid grid-cols-1 sm:grid-cols-[150px_1fr_120px_120px_2fr] gap-4 items-start"
+              className="border overflow-hidden shadow-sm hover:shadow-md transition p-4 grid grid-cols-1 sm:grid-cols-[150px_2fr_120px_120px_2fr] gap-4 items-start"
             >
               {/* 1. Фото */}
               <div className="sm:w-full md:w-[150px] sm:h-[150px] md:h-[100px] flex-shrink-0">
-                <img
-                  src={car.image}
-                  alt={car.title}
-                  className="{w-full} h-{150} object-cover rounded"
-                  loading="lazy"
-                />
+                <a href={car.url} target="_blank" rel="noopener noreferrer">
+                  <img
+                    src={car.image}
+                    alt={car.title}
+                    className="{w-full} h-{150} object-cover rounded"
+                    loading="lazy"
+                  />
+                </a>
               </div>
 
               {/* 2. Заголовок и основные данные */}
               <div>
-                <h3 className="font-semibold text-lg">
-                  🚘{" "}
-                  <a
-                    href={car.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline"
-                  >
-                    {car.title}
-                  </a>
-                </h3>
+                <h3 className="font-semibold text-lg">{car.title}</h3>
                 <p className="text-sm text-white">
                   <br />
                   {car.mileage.toLocaleString()} км
                   <br />
-                  {getGearboxLabel(car.gearbox)}
+                  {car.engineVolume} {getGearboxLabel(car.gearbox)}
                   <br />
-                  {car.engineVolume}л<br />
                   {car.fuel}
                 </p>
                 <p className="text-sm text-white font-bold">{car.city}</p>
                 <p className="text-sm text-gray-200">
-                  Днів у продажу: {car.daysInSale}
+                  Дней в продаже - {car.daysInSale}
                 </p>
               </div>
 
               {/* 3. Цена, разница */}
-              <div className="text-right min-w-[120px]">
+              <div className="text-center min-w-[120px]">
                 <p className="font-bold text-lg">
-                  {car.price.toLocaleString()}$
+                  {car.price.toLocaleString()}
                 </p>
-                <p className={`text-sm ${diff.color}`}>{diff.formatted}</p>
+                <p
+                  className={`text-sm cursor-default ${diff.color}`}
+                  title="Отклонение от среднерыночной цены"
+                >
+                  {diff.formatted}
+                </p>
 
                 <div className="mt-1">
                   <button
@@ -159,26 +155,41 @@ export default function CarResults({ results }: Props) {
                         console.warn("sellerId отсутствует для машины", car);
                       }
                     }}
-                    className="mt-1 text-xs px-2 py-1 rounded bg-green-200 text-green-900 pointer"
+                    className="mt-1 text-xs px-2 py-1 rounded text-green-900 cursor-pointer"
+                    title="Авто продавца"
                   >
-                    Авто продавца ▸{" "}
+                    <img
+                      src="/images/car.png"
+                      alt="Авто продавца"
+                      className="w-8 h-8 inline"
+                    />
                   </button>
                 </div>
               </div>
 
               {/* 4. Дата обновления */}
 
-              <div className="text-right min-w-[120px]">
-                <span className="inline-block text-xs px-2 py-1 rounded bg-gray-200 text-green-900">
+              <div className="text-center min-w-[120px">
+                <span className="inline-block text-xs px-2 py-1 font-bold mb-5">
                   Обновлено:
                   <br />
                   {formatDate(car.lastUpdate)}
                 </span>
                 <br />
+                <h3 className="text-xs px-1 py-1 rounded bg-gray-200 text-green-900">
+                  <a
+                    href={car.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    Подробнее
+                  </a>
+                </h3>
               </div>
 
               {/* 5. Описание */}
-              <div className="text-sm text-gray-200 max-h-20 overflow-hidden text-ellipsis line-clamp-3">
+              <div className="text-sm text-gray-200 max-h-20 overflow-hidden text-ellipsis line-clamp-5">
                 {car.description}
               </div>
             </div>
@@ -242,7 +253,7 @@ export default function CarResults({ results }: Props) {
 
           <div className="flex items-center space-x-2">
             <label className="text-sm text-gray-300">
-              Перейти на сторінку:
+              Перейти на страницу:
             </label>
             <input
               type="number"
