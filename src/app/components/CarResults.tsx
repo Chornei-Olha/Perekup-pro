@@ -22,7 +22,7 @@ function getPriceDiff(price: number, marketPrice: number) {
 
 function formatDate(dateString: string) {
   const date = new Date(dateString);
-  return date.toLocaleDateString("uk-UA", {
+  return date.toLocaleString("uk-UA", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -103,7 +103,7 @@ export default function CarResults({ results }: Props) {
           return (
             <div
               key={car.id}
-              className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition p-4 grid grid-cols-1 sm:grid-cols-[150px_1fr_120px_2fr] gap-4 items-start"
+              className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition p-4 grid grid-cols-1 sm:grid-cols-[150px_1fr_120px_120px_2fr] gap-4 items-start"
             >
               {/* 1. Фото */}
               <div className="sm:w-full md:w-[150px] sm:h-[150px] md:h-[100px] flex-shrink-0">
@@ -137,13 +137,13 @@ export default function CarResults({ results }: Props) {
                   {car.engineVolume}л<br />
                   {car.fuel}
                 </p>
-                <p className="text-sm text-white">{car.city}</p>
+                <p className="text-sm text-white font-bold">{car.city}</p>
                 <p className="text-sm text-gray-200">
                   Днів у продажу: {car.daysInSale}
                 </p>
               </div>
 
-              {/* 3. Цена, разница, дата обновления */}
+              {/* 3. Цена, разница */}
               <div className="text-right min-w-[120px]">
                 <p className="font-bold text-lg">
                   {car.price.toLocaleString()}$
@@ -151,13 +151,6 @@ export default function CarResults({ results }: Props) {
                 <p className={`text-sm ${diff.color}`}>{diff.formatted}</p>
 
                 <div className="mt-1">
-                  <span className="inline-block text-xs px-2 py-1 rounded bg-gray-200 text-green-900">
-                    Обновлено:
-                    <br />
-                    {formatDate(car.lastUpdate)}
-                  </span>
-                  <br />
-
                   <button
                     onClick={() => {
                       if (car.sellerId != null) {
@@ -173,7 +166,18 @@ export default function CarResults({ results }: Props) {
                 </div>
               </div>
 
-              {/* 4. Описание */}
+              {/* 4. Дата обновления */}
+
+              <div className="text-right min-w-[120px]">
+                <span className="inline-block text-xs px-2 py-1 rounded bg-gray-200 text-green-900">
+                  Обновлено:
+                  <br />
+                  {formatDate(car.lastUpdate)}
+                </span>
+                <br />
+              </div>
+
+              {/* 5. Описание */}
               <div className="text-sm text-gray-200 max-h-20 overflow-hidden text-ellipsis line-clamp-3">
                 {car.description}
               </div>
