@@ -10,20 +10,23 @@ import {
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { CarSearchFilters } from "../../lib/types";
 
-type Option = { id: number; name: string };
+type Option = { id: number; name: string; unit: string };
 
 interface CarSearchFormProps {
   onSubmit: (filters: CarSearchFilters) => void;
 }
 
 const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
-  const periodOptions: Option[] = [
-    { id: 0, name: "Весь период" },
-    { id: 1, name: "1 день" },
-    { id: 3, name: "3 дня" },
-    { id: 7, name: "7 дней" },
-    { id: 30, name: "30 дней" },
-  ];
+  const periodOptions: { id: number; name: string; unit: "hours" | "days" }[] =
+    [
+      { id: 0, name: "Весь период", unit: "days" },
+      { id: 1, name: "1 час", unit: "hours" },
+      { id: 3, name: "3 часа", unit: "hours" },
+      { id: 1, name: "1 день", unit: "days" },
+      { id: 3, name: "3 дня", unit: "days" },
+      { id: 7, name: "7 дней", unit: "days" },
+      { id: 30, name: "30 дней", unit: "days" },
+    ];
 
   const [regions, setRegions] = useState<Option[]>([]);
   const [brands, setBrands] = useState<Option[]>([]);
@@ -111,7 +114,12 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
           ? Number(formData.get("state"))
           : undefined,
       marketPriceDeviation: Number(formData.get("deviation")) || 0,
-      period: selectedPeriod.id !== 0 ? selectedPeriod.id * 24 : undefined,
+      period:
+        selectedPeriod.id !== 0
+          ? selectedPeriod.unit === "days"
+            ? selectedPeriod.id * 24
+            : selectedPeriod.id
+          : undefined,
     };
 
     onSubmit(data);

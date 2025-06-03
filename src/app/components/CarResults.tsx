@@ -129,8 +129,12 @@ export default function CarResults({ results }: Props) {
                   </a>
                 </h3>
                 <p className="text-sm text-white">
-                  {car.year} • {car.mileage.toLocaleString()} км •{" "}
-                  {getGearboxLabel(car.gearbox)} • {car.engineVolume}л •{" "}
+                  <br />
+                  {car.mileage.toLocaleString()} км
+                  <br />
+                  {getGearboxLabel(car.gearbox)}
+                  <br />
+                  {car.engineVolume}л<br />
                   {car.fuel}
                 </p>
                 <p className="text-sm text-white">{car.city}</p>
