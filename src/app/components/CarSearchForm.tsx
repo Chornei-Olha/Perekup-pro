@@ -10,7 +10,7 @@ import {
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { CarSearchFilters } from "../../lib/types";
 
-type Option = { id: number; name: string; unit: string };
+type Option = { id: number; name: string; unit?: "hours" | "days" };
 
 interface CarSearchFormProps {
   onSubmit: (filters: CarSearchFilters) => void;
