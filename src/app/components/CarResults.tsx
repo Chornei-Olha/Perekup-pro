@@ -58,6 +58,16 @@ export default function CarResults({ results }: Props) {
   const [sellerCars, setSellerCars] = useState<Car[]>([]);
   const [isLoadingSellerCars, setIsLoadingSellerCars] = useState(false);
 
+  const [selectedCarIdForPrices, setSelectedCarIdForPrices] = useState<
+    number | null
+  >(null);
+  const [priceHistory, setPriceHistory] = useState<
+    { date: string; price: number }[]
+  >([]);
+  const [isLoadingPrices, setIsLoadingPrices] = useState(false);
+
+  // const [carsWithPrices, setCarsWithPrices] = useState<Set<number>>(new Set());
+
   useEffect(() => {
     if (selectedSellerId !== null) {
       setIsLoadingSellerCars(true);
@@ -88,6 +98,40 @@ export default function CarResults({ results }: Props) {
         });
     }
   }, [selectedSellerId]);
+
+  // Добавляем useEffect для загрузки истории цен:
+  useEffect(() => {
+    if (selectedCarIdForPrices !== null) {
+      setIsLoadingPrices(true);
+      fetch(`https://perecup-pro.com/api/cars/prices`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ carId: selectedCarIdForPrices }),
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`Ошибка сервера: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then((data) => {
+          console.log("Цены по авто:", data);
+          setPriceHistory(data);
+          // if (data && data.length > 0 && selectedCarIdForPrices !== null) {
+          //   // Добавляем в Set (создаем новый Set для обновления состояния)
+          //   setCarsWithPrices((prev) =>
+          //     new Set(prev).add(selectedCarIdForPrices)
+          //   );
+          // }
+          setIsLoadingPrices(false);
+        })
+        .catch((error) => {
+          console.error("Ошибка при загрузке цен:", error);
+          setPriceHistory([]);
+          setIsLoadingPrices(false);
+        });
+    }
+  }, [selectedCarIdForPrices]);
 
   const closeModal = () => {
     setSelectedSellerId(null);
@@ -146,6 +190,28 @@ export default function CarResults({ results }: Props) {
                   {diff.formatted}
                 </p>
 
+                {/* {carsWithPrices.has(car.id) && ( */}
+                <div className="mt-1">
+                  <button
+                    onClick={() => {
+                      if (car.id != null) {
+                        setSelectedCarIdForPrices(car.id);
+                      } else {
+                        console.warn("id отсутствует для машины", car);
+                      }
+                    }}
+                    className="text-xs px-2 py-1 rounded text-white cursor-pointer"
+                    title="График цен"
+                  >
+                    <img
+                      src="/images/chart.png"
+                      alt="График цен"
+                      className="w-8 h-8 inline"
+                    />
+                  </button>
+                </div>
+                {/* )} */}
+
                 <div className="mt-1">
                   <button
                     onClick={() => {
@@ -196,7 +262,6 @@ export default function CarResults({ results }: Props) {
           );
         })}
       </div>
-
       {/* Пагинация */}
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row justify-center items-center gap-3 mt-8">
@@ -355,6 +420,57 @@ export default function CarResults({ results }: Props) {
                   </li>
                 ))}
               </ul>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Модалка для отображения истории цен: */}
+      {selectedCarIdForPrices !== null && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white max-w-lg w-full rounded-lg shadow-lg p-6 overflow-y-auto max-h-[80vh]">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-black">
+                История цен на авто
+              </h2>
+              <button
+                onClick={() => {
+                  setSelectedCarIdForPrices(null);
+                  setPriceHistory([]);
+                }}
+                className="text-gray-600 hover:text-black text-sm"
+              >
+                ✕ Закрыть
+              </button>
+            </div>
+
+            {isLoadingPrices ? (
+              <p>Загрузка...</p>
+            ) : priceHistory.length === 0 ? (
+              <p>История цен отсутствует.</p>
+            ) : (
+              <div>
+                <table className="min-w-full text-left border">
+                  <thead className="bg-gray-200">
+                    <tr>
+                      <th className="px-4 py-2 border">Дата</th>
+                      <th className="px-4 py-2 border">Цена ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {priceHistory.map((item, index) => (
+                      <tr key={index} className="border-t">
+                        <td className="px-4 py-2 border">
+                          {item.date
+                            ? new Date(item.date).toLocaleDateString("uk-UA")
+                            : "-"}
+                        </td>
+                        <td className="px-4 py-2 border">{item.price}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>
