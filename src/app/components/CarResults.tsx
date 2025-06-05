@@ -11,7 +11,18 @@ function getGearboxLabel(code: number) {
   return code === 0 ? "МТ" : code === 1 ? "АТ" : "—";
 }
 
-function getPriceDiff(price: number, marketPrice: number) {
+function getPriceDiff(price: number, marketPrice?: number) {
+  if (
+    typeof marketPrice !== "number" ||
+    isNaN(marketPrice) ||
+    marketPrice === 0
+  ) {
+    return {
+      value: 0,
+      formatted: "—",
+      color: "text-gray-400",
+    };
+  }
   const diff = price - marketPrice;
   return {
     value: diff,
