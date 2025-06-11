@@ -7,12 +7,12 @@ import CarSearchForm from "@/app/components/CarSearchForm";
 import Top50Slider from "@/app/components/Slider";
 import { Car, CarSearchFilters } from "@/lib/types";
 import Header from "@/app/components/Header";
-// import { useSessionInfo } from "@/hooks/useSessionInfo"; // ✅ импорт хука
+import { useSessionInfo } from "@/hooks/useSessionInfo"; // ✅ импорт хука
 
 export default function HomePage() {
   const [results, setResults] = useState<Car[]>([]);
   const [loading, setLoading] = useState(false);
-  // const { loading: checkingSession } = useSessionInfo(); // ✅ вызов хука
+  const { loading: checkingSession } = useSessionInfo(); // ✅ вызов хука
 
   const handleSearch = async (filters: CarSearchFilters) => {
     setLoading(true);
@@ -21,8 +21,8 @@ export default function HomePage() {
     setLoading(false);
   };
 
-  // if (checkingSession)
-  //   return <p className="text-white p-4">Проверка доступа...</p>; // ✅ прелоадер
+  if (checkingSession)
+    return <p className="text-white p-4">Проверка доступа...</p>; // ✅ прелоадер
 
   return (
     <section
