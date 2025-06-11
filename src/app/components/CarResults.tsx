@@ -451,7 +451,7 @@ export default function CarResults({ results }: Props) {
             ) : (
               <div>
                 <table className="min-w-full text-left border">
-                  <thead className="bg-gray-200">
+                  <thead className="bg-gray-400">
                     <tr>
                       <th className="px-4 py-2 border">Дата</th>
                       <th className="px-4 py-2 border">Цена ($)</th>
@@ -460,12 +460,14 @@ export default function CarResults({ results }: Props) {
                   <tbody>
                     {priceHistory.map((item, index) => (
                       <tr key={index} className="border-t">
-                        <td className="px-4 py-2 border">
+                        <td className="px-4 py-2 border text-black">
                           {item.date
                             ? new Date(item.date).toLocaleDateString("uk-UA")
                             : "-"}
                         </td>
-                        <td className="px-4 py-2 border">{item.price}</td>
+                        <td className="px-4 py-2 border text-black">
+                          {item.price}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
