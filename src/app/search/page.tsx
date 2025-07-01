@@ -7,9 +7,13 @@ import CarSearchForm from "@/app/components/CarSearchForm";
 import Top50Slider from "@/app/components/Slider";
 import { Car, CarSearchFilters } from "@/lib/types";
 import Header from "@/app/components/Header";
+import { useRouter } from "next/navigation";
+
 // import { useSessionInfo } from "@/hooks/useSessionInfo"; // ✅ импорт хука
 
 export default function HomePage() {
+  const router = useRouter();
+
   const [results, setResults] = useState<Car[]>([]);
   const [loading, setLoading] = useState(false);
   // const { loading: checkingSession } = useSessionInfo(); // ✅ вызов хука
@@ -33,6 +37,14 @@ export default function HomePage() {
       }}
     >
       <Header />
+      <div className="flex justify-end pt-4 px-4 sm:px-16">
+        <button
+          onClick={() => router.push("/subscriptions")}
+          className="font-['Inter'] font-extralight text-[10px] sm:text-[15px] bg-[#9D0D14] hover:bg-red-700 transition px-4 py-2 rounded-[20px] text-white"
+        >
+          Задать фильтры для уведомлений
+        </button>
+      </div>
       <CarSearchForm onSubmit={handleSearch} />
       <Top50Slider />
       {loading ? <p>Загрузка...</p> : <CarResults results={results} />}

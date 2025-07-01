@@ -117,3 +117,71 @@ export async function getTopCars(): Promise<Car[]> {
     return [];
   }
 }
+
+// Получить все подписки
+export const getNotificationFilters = async () => {
+  const res = await fetch(
+    "https://car.dimzizmistom.com.ua/api/v1/updates/filters",
+    {
+      method: "POST",
+      // credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    }
+  );
+
+  return await res.json();
+};
+
+// Добавить новую подписку
+export const addNotificationFilter = async (params: any) => {
+  const res = await fetch(
+    "https://car.dimzizmistom.com.ua/api/v1/updates/filters/new",
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params),
+    }
+  );
+
+  if (!res.ok) throw new Error("Ошибка добавления фильтра");
+};
+
+// Удалить фильтр
+export const deleteNotificationFilter = async (id: string) => {
+  const res = await fetch(
+    "https://car.dimzizmistom.com.ua/api/v1/updates/filters/delete",
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    }
+  );
+
+  if (!res.ok) throw new Error("Ошибка удаления фильтра");
+};
+
+// Редактировать фильтр (если потребуется)
+export const editNotificationFilter = async (id: string, params: any) => {
+  const res = await fetch(
+    "https://car.dimzizmistom.com.ua/api/v1/updates/filters/edit",
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, params }),
+    }
+  );
+
+  if (!res.ok) throw new Error("Ошибка редактирования фильтра");
+};

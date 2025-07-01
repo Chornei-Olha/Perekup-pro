@@ -116,8 +116,6 @@ export default function SubscriptionPage() {
     fetchPlans();
   }, [userPhone]);
 
-  // Остальной код — без изменений
-
   const handleTryFree = async () => {
     try {
       const res = await fetch("/api/v1/user/info", {
@@ -231,10 +229,6 @@ export default function SubscriptionPage() {
             ))}
           </div>
         )}
-
-        {/* <p className="font-['Inter'] font-extralight text-left text-[#EFEFEF] text-[20px] sm:text-[32px]">
-          После оплаты пришлите почту или вайбер
-        </p> */}
       </section>
     </main>
   );
