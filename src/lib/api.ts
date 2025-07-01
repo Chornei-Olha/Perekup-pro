@@ -136,7 +136,7 @@ export const getNotificationFilters = async () => {
 };
 
 // Добавить новую подписку
-export const addNotificationFilter = async (params: any) => {
+export const addNotificationFilter = async (params: CarSearchFilters) => {
   const res = await fetch(
     "https://car.dimzizmistom.com.ua/api/v1/updates/filters/new",
     {
@@ -170,7 +170,10 @@ export const deleteNotificationFilter = async (id: string) => {
 };
 
 // Редактировать фильтр (если потребуется)
-export const editNotificationFilter = async (id: string, params: any) => {
+export const editNotificationFilter = async (
+  id: string,
+  params: CarSearchFilters
+) => {
   const res = await fetch(
     "https://car.dimzizmistom.com.ua/api/v1/updates/filters/edit",
     {

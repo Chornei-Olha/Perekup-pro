@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { getNotificationFilters, deleteNotificationFilter } from "@/lib/api";
 import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { CarSearchFilters } from "@/lib/types";
 
 interface FilterRow {
   id: string;
-  params: any;
+  params: CarSearchFilters;
   date_created: string;
   user_id: string;
 }
@@ -102,10 +103,13 @@ const FilterSubscriptionsTable: React.FC = () => {
                   : "Любой"}
               </td>
               <td className="border p-1">
-                {["Бензин", "Дизель", "Электро", "Гибрид", "Другой"][
-                  filter.params.fuel
-                ] || "Любое"}
+                {typeof filter.params.fuel === "number"
+                  ? ["Бензин", "Дизель", "Электро", "Гибрид", "Другой"][
+                      filter.params.fuel
+                    ]
+                  : "Любое"}
               </td>
+
               <td className="border p-1">
                 {filter.params.minYear} – {filter.params.maxYear}
               </td>
@@ -120,13 +124,13 @@ const FilterSubscriptionsTable: React.FC = () => {
                 {filter.params.state === 1 ? "Целые" : "Любые"}
               </td>
               <td className="border p-1">
-                <div
+                {/* <div
                   className={`inline-block px-2 py-1 rounded-full text-white text-xs ${
                     filter.params.enabled ? "bg-green-600" : "bg-red-600"
                   }`}
                 >
                   {filter.params.enabled ? "Вкл" : "Откл"}
-                </div>
+                </div> */}
               </td>
               <td className="border p-1">
                 {filter.params.includeDealers ? "Да" : "Нет"}
