@@ -47,5 +47,3 @@ export interface CarSearchFilters {
   period?: number;
   sellerId?: number;
 }
-
-//

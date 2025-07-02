@@ -135,7 +135,7 @@ const CarFilterForm: React.FC<Props> = ({ handleAddFilter }) => {
       <label className="font-medium block mb-1">{label}</label>
       <Listbox value={selected} onChange={setSelected}>
         <div className="relative">
-          <ListboxButton className="w-full border p-2 rounded bg-white text-left">
+          <ListboxButton className="w-full border p-2 rounded bg-transparent text-left">
             {selected?.name || `Выберите ${label.toLowerCase()}`}
             <ChevronUpDownIcon className="h-5 w-5 absolute right-2 top-2.5 text-gray-400" />
           </ListboxButton>

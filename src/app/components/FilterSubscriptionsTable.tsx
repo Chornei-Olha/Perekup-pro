@@ -1,10 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getNotificationFilters, deleteNotificationFilter } from "@/lib/api";
+import {
+  getNotificationFilters,
+  editNotificationFilter,
+  deleteNotificationFilter,
+  getBrands,
+  getModels,
+  getRegions,
+} from "@/lib/api";
 import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { CarSearchFilters } from "@/lib/types";
+import type { Brand, Model, Region } from "@/lib/types";
 
 interface FilterRow {
   id: string;
@@ -16,6 +24,41 @@ interface FilterRow {
 const FilterSubscriptionsTable: React.FC = () => {
   const [filters, setFilters] = useState<FilterRow[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [models, setModels] = useState<Model[]>([]);
+  const [regions, setRegions] = useState<Region[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [filtersRes, brandsRes, modelsRes, regionsRes] =
+          await Promise.all([
+            getNotificationFilters(),
+            getBrands(),
+            getModels([]), // получим все модели
+            getRegions(),
+          ]);
+        setFilters(filtersRes);
+        setBrands(brandsRes);
+        setModels(modelsRes);
+        setRegions(regionsRes);
+      } catch (error) {
+        console.error("Ошибка загрузки фильтров или справочников:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const getBrandName = (id: number | string) =>
+    brands.find((b) => b.id === Number(id))?.name || `#${id}`;
+  const getModelName = (id: number | string) =>
+    models.find((m) => m.id === Number(id))?.name || `#${id}`;
+  const getRegionName = (id: number | string) =>
+    regions.find((r) => r.id === Number(id))?.name || `#${id}`;
 
   const fetchFilters = async () => {
     try {
@@ -32,6 +75,43 @@ const FilterSubscriptionsTable: React.FC = () => {
     fetchFilters();
   }, []);
 
+  const toggleEnabled = async (id: string) => {
+    try {
+      // Знаходимо фільтр, який треба змінити
+      const filter = filters.find((f) => f.id === id);
+      if (!filter) return;
+
+      // Створюємо оновлені params з інвертованим enabled
+      const updatedParams = {
+        ...filter.params,
+        enabled: !filter.params.enabled,
+      };
+
+      setFilters((prev) =>
+        prev.map((f) => (f.id === id ? { ...f, params: updatedParams } : f))
+      );
+    } catch (error) {
+      console.error("Не вдалося переключити enabled:", error);
+    }
+  };
+
+  const handleEdit = async (id: string) => {
+    try {
+      const filterToEdit = filters.find((f) => f.id === id);
+      if (!filterToEdit) {
+        console.error("Фильтр не найден");
+        return;
+      }
+
+      // Передаем в функцию и id, и параметры фильтра
+      await editNotificationFilter(id, filterToEdit.params);
+
+      // По логике, тут можно обновить состояние, если нужно
+    } catch (err) {
+      console.error("Не вдалося редагувати фільтр", err);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     try {
       await deleteNotificationFilter(id);
@@ -45,7 +125,7 @@ const FilterSubscriptionsTable: React.FC = () => {
 
   return (
     <div className="overflow-x-auto mt-10">
-      <table className="container border text-xs sm:text-sm bg-[#D9D9D9]">
+      <table className="container border text-xs bg-[#D9D9D9]">
         <thead className="bg-[#333] text-white">
           <tr>
             <th className="border p-2">Марки</th>
@@ -82,16 +162,23 @@ const FilterSubscriptionsTable: React.FC = () => {
             <th className="border p-2">Удалить</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-black">
           {filters.map((filter) => (
             <tr key={filter.id} className="text-center">
               <td className="border p-1">
-                {(filter.params.brands || []).join(", ") || "–"}
+                {(filter.params.brands || [])
+                  .map((id) => getBrandName(Number(id)))
+                  .join(", ") || "–"}
               </td>
               <td className="border p-1">
-                {(filter.params.models || []).join(", ") || "–"}
+                {(filter.params.models || [])
+                  .map((id) => getModelName(Number(id)))
+                  .join(", ") || "–"}
               </td>
-              <td className="border p-1">{filter.params.region || "–"}</td>
+              <td className="border p-1">
+                {getRegionName(Number(filter.params.region)) || "–"}
+              </td>
+
               <td className="border p-1">
                 {filter.params.minPrice} – {filter.params.maxPrice}
               </td>
@@ -124,14 +211,16 @@ const FilterSubscriptionsTable: React.FC = () => {
                 {filter.params.state === 1 ? "Целые" : "Любые"}
               </td>
               <td className="border p-1">
-                {/* <div
-                  className={`inline-block px-2 py-1 rounded-full text-white text-xs ${
+                <button
+                  onClick={() => toggleEnabled(filter.id)}
+                  className={`inline-block px-2 py-1 rounded-full text-white text-xs cursor-pointer ${
                     filter.params.enabled ? "bg-green-600" : "bg-red-600"
                   }`}
                 >
                   {filter.params.enabled ? "Вкл" : "Откл"}
-                </div> */}
+                </button>
               </td>
+
               <td className="border p-1">
                 {filter.params.includeDealers ? "Да" : "Нет"}
               </td>
@@ -148,13 +237,16 @@ const FilterSubscriptionsTable: React.FC = () => {
                 </a>
               </td>
               <td className="border p-1">
-                <button title="Редактировать">
-                  <PencilIcon className="h-5 w-5 text-yellow-600 hover:opacity-80 mx-auto" />
+                <button
+                  onClick={() => handleEdit(filter.id)}
+                  title="Редактировать"
+                >
+                  <PencilIcon className="h-5 w-5 text-yellow-600 hover:opacity-80 mx-auto cursor-pointer" />
                 </button>
               </td>
               <td className="border p-1">
                 <button onClick={() => handleDelete(filter.id)} title="Удалить">
-                  <TrashIcon className="h-5 w-5 text-red-600 hover:opacity-80 mx-auto" />
+                  <TrashIcon className="h-5 w-5 text-red-600 hover:opacity-80 mx-auto cursor-pointer" />
                 </button>
               </td>
             </tr>
