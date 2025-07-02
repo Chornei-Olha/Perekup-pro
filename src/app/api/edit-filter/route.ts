@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
+    console.error("Ошибка при редактировании фильтра:", error);
     return new NextResponse(
       JSON.stringify({ error: "Internal Server Error" }),
       { status: 500, headers: { "Content-Type": "application/json" } }

@@ -46,4 +46,5 @@ export interface CarSearchFilters {
   marketPriceDeviation?: number;
   period?: number;
   sellerId?: number;
+  enabled?: boolean;
 }

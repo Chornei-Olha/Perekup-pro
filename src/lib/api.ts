@@ -194,3 +194,27 @@ export const editNotificationFilter = async (
     throw new Error("Ошибка редактирования фильтра");
   }
 };
+
+export const fetchNotificationFilters = async (
+  params: Record<string, unknown> = {}
+) => {
+  console.log("fetchNotificationFilters called with:", params);
+
+  const res = await fetch("/api/updates/filters", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    console.error("❌ Ошибка получения фильтров:", error);
+    throw new Error("Ошибка получения фильтров");
+  }
+
+  const data = await res.json();
+  return data;
+};
