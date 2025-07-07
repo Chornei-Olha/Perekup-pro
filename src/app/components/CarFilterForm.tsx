@@ -14,9 +14,10 @@ type Option = { id: number; name: string; unit?: "hours" | "days" };
 
 interface Props {
   handleAddFilter: (filters: CarSearchFilters) => void;
+  initialValues?: CarSearchFilters;
 }
 
-const CarFilterForm: React.FC<Props> = ({ handleAddFilter }) => {
+const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
   const periodOptions: Option[] = [
     { id: 0, name: "Весь период", unit: "days" },
     { id: 1, name: "1 час", unit: "hours" },
@@ -44,7 +45,12 @@ const CarFilterForm: React.FC<Props> = ({ handleAddFilter }) => {
   const [brands, setBrands] = useState<Option[]>([]);
   const [models, setModels] = useState<Option[]>([]);
 
-  const [selectedBrand, setSelectedBrand] = useState<Option | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<Option | null>(() => {
+    const brandId = initialValues?.brands?.[0];
+    return brandId !== undefined
+      ? brands.find((b) => b.id === brandId) || null
+      : null;
+  });
   const [selectedModel, setSelectedModel] = useState<Option | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<Option | null>(null);
   const [selectedGearbox, setSelectedGearbox] = useState<Option | null>(null);

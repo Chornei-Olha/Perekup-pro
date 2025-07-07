@@ -1,3 +1,5 @@
+"use client";
+
 import { Brand, Model, Region, Car, CarSearchFilters } from "./types";
 
 const BASE_URL =
@@ -142,7 +144,7 @@ export const getNotificationFilters = async () => {
 export const addNotificationFilter = async (params: CarSearchFilters) => {
   const res = await fetch("/api/add-filter", {
     method: "POST",
-    credentials: "include", // передає куки на бекенд через твій проксі
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -195,6 +197,7 @@ export const editNotificationFilter = async (
   }
 };
 
+// Отримати підписки на розсилку
 export const fetchNotificationFilters = async (
   params: Record<string, unknown> = {}
 ) => {

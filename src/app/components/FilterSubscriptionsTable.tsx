@@ -39,6 +39,7 @@ const FilterSubscriptionsTable: React.FC = () => {
             getModels([]), // получим все модели
             getRegions(),
           ]);
+
         setFilters(filtersRes);
         setBrands(brandsRes);
         setModels(modelsRes);
@@ -77,19 +78,21 @@ const FilterSubscriptionsTable: React.FC = () => {
 
   const toggleEnabled = async (id: string) => {
     try {
-      // Знаходимо фільтр, який треба змінити
       const filter = filters.find((f) => f.id === id);
       if (!filter) return;
 
-      // Створюємо оновлені params з інвертованим enabled
       const updatedParams = {
         ...filter.params,
         enabled: !filter.params.enabled,
       };
 
+      // Обновляем локально
       setFilters((prev) =>
         prev.map((f) => (f.id === id ? { ...f, params: updatedParams } : f))
       );
+
+      // 🔥 Добавляем вызов API
+      await editNotificationFilter(id, updatedParams);
     } catch (error) {
       console.error("Не вдалося переключити enabled:", error);
     }
