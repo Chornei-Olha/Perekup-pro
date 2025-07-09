@@ -179,10 +179,9 @@ const FilterSubscriptionsTable: React.FC = () => {
                   .join(", ") || "–"}
               </td>
               <td className="border p-1">
-                {(filter.params.models || [])
-                  .map((id) => getRegionName(Number(id)))
-                  .join(", ") || "–"}
-                {/* {getRegionName(Number(filter.params.region)) || "–"} */}
+                {filter.params.region !== undefined
+                  ? getRegionName(filter.params.region)
+                  : "–"}
               </td>
 
               <td className="border p-1">
