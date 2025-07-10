@@ -14,8 +14,36 @@ type Option = { id: number; name: string; unit?: "hours" | "days" };
 
 interface Props {
   handleAddFilter: (filters: CarSearchFilters) => void;
+  onAddFilter?: (filters: CarSearchFilters) => void;
+
   initialValues?: CarSearchFilters;
 }
+
+export const defaultFilterValues: CarSearchFilters = {
+  brands: [],
+  models: [],
+  region: undefined,
+  minPrice: undefined,
+  maxPrice: undefined,
+  minYear: 2000,
+  maxYear: new Date().getFullYear(),
+  minEngineVolume: undefined,
+  maxEngineVolume: undefined,
+  minMileage: undefined,
+  maxMileage: undefined,
+  gearbox: undefined,
+  fuel: undefined,
+  paint: false,
+  transfer: false,
+  sold: false,
+  includeDealers: false,
+  includeBanned: false,
+  state: undefined,
+  marketPriceDeviation: 0,
+  period: undefined,
+  sellerId: undefined,
+  enabled: true,
+};
 
 const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
   const periodOptions: Option[] = [
@@ -83,6 +111,54 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
       setSelectedModel(null);
     }
   }, [selectedBrand]);
+
+  useEffect(() => {
+    if (initialValues) {
+      const brandId = initialValues.brands?.[0];
+      const brand = brands.find((b) => b.id === brandId) || null;
+      setSelectedBrand(brand);
+
+      if (brand) {
+        // Загрузить модели для бренда
+        fetch("/api/models/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ brands: [brand.id] }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setModels(data);
+            const modelId = initialValues.models?.[0];
+            const model = data.find((m: Option) => m.id === modelId) || null;
+            setSelectedModel(model);
+          });
+      }
+
+      const region = regions.find((r) => r.id === initialValues.region) || null;
+      setSelectedRegion(region);
+
+      const gearbox =
+        gearboxOptions.find((g) => g.id === initialValues.gearbox) || null;
+      setSelectedGearbox(gearbox);
+
+      const fuel = fuelOptions.find((f) => f.id === initialValues.fuel) || null;
+      setSelectedFuel(fuel);
+
+      const periodId = initialValues.period
+        ? initialValues.period % 24 === 0
+          ? initialValues.period / 24
+          : initialValues.period
+        : 0;
+      const unit =
+        initialValues.period && initialValues.period % 24 === 0
+          ? "days"
+          : "hours";
+      const period =
+        periodOptions.find((p) => p.id === periodId && p.unit === unit) ||
+        periodOptions[0];
+      setSelectedPeriod(period);
+    }
+  }, [initialValues, brands, regions]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -213,13 +289,15 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
             <label className="col-span-3 font-medium">Цена, $</label>
             <input
               name="minPrice"
-              defaultValue={1000}
+              // defaultValue={1000}
+              defaultValue={initialValues?.minPrice ?? 1000}
               type="number"
               className="border p-2 rounded"
             />
             <input
               name="maxPrice"
-              defaultValue={100000}
+              // defaultValue={100000}
+              defaultValue={initialValues?.maxPrice ?? 100000}
               type="number"
               className="border p-2 rounded"
             />
@@ -229,13 +307,15 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
             <label className="col-span-3 font-medium">Год</label>
             <input
               name="minYear"
-              defaultValue={2000}
+              // defaultValue={2000}
+              defaultValue={initialValues?.minYear ?? 2000}
               type="number"
               className="border p-2 rounded"
             />
             <input
               name="maxYear"
-              defaultValue={2025}
+              // defaultValue={2025}
+              defaultValue={initialValues?.maxYear ?? 2025}
               type="number"
               className="border p-2 rounded"
             />
@@ -245,14 +325,16 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
             <label className="col-span-3 font-medium">Объём, см³</label>
             <input
               name="minEngine"
-              defaultValue={0}
+              // defaultValue={0}
+              defaultValue={initialValues?.minEngineVolume ?? 0}
               type="number"
               step="0.1"
               className="border p-2 rounded"
             />
             <input
               name="maxEngine"
-              defaultValue={6.5}
+              // defaultValue={6.5}
+              defaultValue={initialValues?.maxEngineVolume ?? 6.5}
               type="number"
               step="0.1"
               className="border p-2 rounded"
@@ -263,13 +345,15 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
             <label className="col-span-3 font-medium">Пробег</label>
             <input
               name="minMileage"
-              defaultValue={100}
+              // defaultValue={100}
+              defaultValue={initialValues?.minMileage ?? 100}
               type="number"
               className="border p-2 rounded"
             />
             <input
               name="maxMileage"
-              defaultValue={1000000}
+              // defaultValue={1000000}
+              defaultValue={initialValues?.maxMileage ?? 100000}
               type="number"
               className="border p-2 rounded"
             />
@@ -277,25 +361,52 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
 
           <div className="space-y-1">
             <label>
-              <input name="paint" type="checkbox" className="mr-2" /> Крашенные
+              <input
+                name="paint"
+                type="checkbox"
+                defaultChecked={initialValues?.paint}
+                className="mr-2"
+              />{" "}
+              Крашенные
             </label>
             <br />
             <label>
-              <input name="transfer" type="checkbox" className="mr-2" />{" "}
+              <input
+                name="transfer"
+                type="checkbox"
+                defaultChecked={initialValues?.transfer}
+                className="mr-2"
+              />{" "}
               Пригнанные
             </label>
             <br />
             <label>
-              <input name="sold" type="checkbox" className="mr-2" /> Проданные
+              <input
+                name="sold"
+                type="checkbox"
+                defaultChecked={initialValues?.sold}
+                className="mr-2"
+              />{" "}
+              Проданные
             </label>
             <br />
             <label>
-              <input name="includeDealers" type="checkbox" className="mr-2" />{" "}
+              <input
+                name="includeDealers"
+                type="checkbox"
+                defaultChecked={initialValues?.includeDealers}
+                className="mr-2"
+              />{" "}
               Дилеры
             </label>
             <br />
             <label>
-              <input name="includeBanned" type="checkbox" className="mr-2" />{" "}
+              <input
+                name="includeBanned"
+                type="checkbox"
+                defaultChecked={initialValues?.includeBanned}
+                className="mr-2"
+              />{" "}
               Заблокированные
             </label>
           </div>

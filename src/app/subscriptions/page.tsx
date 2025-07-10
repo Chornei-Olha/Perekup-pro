@@ -10,15 +10,18 @@ import { useRouter } from "next/navigation";
 
 const SubscriptionsPage = () => {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [filterToEdit, setFilterToEdit] = useState<CarSearchFilters | null>(
+    null
+  );
 
   const handleAddFilter = async (filters: CarSearchFilters) => {
     try {
       await addNotificationFilter(filters);
-      alert("Фільтр успішно додано");
-      setRefreshKey((prev) => prev + 1); // оновити таблицю
+      alert("Фильтр добавлен успешно");
+      setRefreshKey((prev) => prev + 1);
     } catch (err) {
-      console.error("Не вдалося додати фільтр:", err);
-      alert("Помилка додавання фільтра");
+      console.error("Не удалось добавить фильтр", err);
+      alert("Ошибка добавления фильтра");
     }
   };
   const router = useRouter();
@@ -44,8 +47,16 @@ const SubscriptionsPage = () => {
         <h1 className="text-2xl font-bold mb-6">Управление подписками</h1>
 
         <div className="bg-transparent p-6 rounded-lg shadow-md">
-          <CarFilterForm handleAddFilter={handleAddFilter} />
-          <FilterSubscriptionsTable key={refreshKey} />
+          {/* <CarFilterForm handleAddFilter={handleAddFilter} /> */}
+
+          <CarFilterForm
+            handleAddFilter={handleAddFilter}
+            initialValues={filterToEdit ?? undefined}
+          />
+          <FilterSubscriptionsTable
+            key={refreshKey}
+            onEditFilter={setFilterToEdit}
+          />
         </div>
       </div>
     </section>

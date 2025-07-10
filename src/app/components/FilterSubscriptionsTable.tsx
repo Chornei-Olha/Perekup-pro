@@ -1,4 +1,5 @@
 "use client";
+import { FC } from "react";
 
 import { useEffect, useState } from "react";
 import {
@@ -20,8 +21,11 @@ interface FilterRow {
   date_created: string;
   user_id: string;
 }
+type Props = {
+  onEditFilter: (filter: CarSearchFilters) => void;
+};
 
-const FilterSubscriptionsTable: React.FC = () => {
+const FilterSubscriptionsTable: FC<Props> = ({ onEditFilter }) => {
   const [filters, setFilters] = useState<FilterRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,7 +70,7 @@ const FilterSubscriptionsTable: React.FC = () => {
       const data = await getNotificationFilters();
       setFilters(data);
     } catch (error) {
-      console.error("Помилка завантаження підписок:", error);
+      console.error("Ошибка загрузки подписок:", error);
     } finally {
       setLoading(false);
     }
@@ -94,37 +98,47 @@ const FilterSubscriptionsTable: React.FC = () => {
       // 🔥 Добавляем вызов API
       await editNotificationFilter(id, updatedParams);
     } catch (error) {
-      console.error("Не вдалося переключити enabled:", error);
+      console.error("Не удалось переключить enabled:", error);
     }
   };
 
-  const handleEdit = async (id: string) => {
-    try {
-      const filterToEdit = filters.find((f) => f.id === id);
-      if (!filterToEdit) {
-        console.error("Фильтр не найден");
-        return;
-      }
+  // const handleEdit = async (id: string) => {
+  //   try {
+  //     const filterToEdit = filters.find((f) => f.id === id);
+  //     if (!filterToEdit) {
+  //       console.error("Фильтр не найден");
+  //       return;
+  //     }
 
-      // Передаем в функцию и id, и параметры фильтра
-      await editNotificationFilter(id, filterToEdit.params);
+  //     // Передаем в функцию и id, и параметры фильтра
+  //     await editNotificationFilter(id, filterToEdit.params);
 
-      // По логике, тут можно обновить состояние, если нужно
-    } catch (err) {
-      console.error("Не вдалося редагувати фільтр", err);
-    }
-  };
+  //     // По логике, тут можно обновить состояние, если нужно
+  //   } catch (err) {
+  //     console.error("Не вдалося редагувати фільтр", err);
+  //   }
+  // };
+
+  // const handleEdit = (id: string) => {
+  //   const filterToEdit = filters.find((f) => f.id === id);
+  //   if (!filterToEdit) return;
+  //   setFilterToEdit(filterToEdit.params);
+  // };
+  // const handleEdit = (filter: CarSearchFilters) => {
+  //   setEditedFilter(filter);
+  //   setIsChanged(false);
+  // };
 
   const handleDelete = async (id: string) => {
     try {
       await deleteNotificationFilter(id);
       setFilters((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
-      console.error("Не вдалося видалити фільтр", err);
+      console.error("Не удалось удалить фильтр", err);
     }
   };
 
-  if (loading) return <div>Завантаження...</div>;
+  if (loading) return <div>Загрузка...</div>;
 
   return (
     <div className="overflow-x-auto mt-10">
@@ -147,9 +161,9 @@ const FilterSubscriptionsTable: React.FC = () => {
               оповещение
             </th>
             <th className="border p-2">
-              Исключить
+              Включить
               <br />
-              брокеров
+              дилеров
             </th>
             <th className="border p-2">
               Отклонение
@@ -227,7 +241,7 @@ const FilterSubscriptionsTable: React.FC = () => {
               </td>
 
               <td className="border p-1">
-                {filter.params.includeDealers ? "Да" : "Нет"}
+                {filter.params.includeDealers ? "Нет" : "Да"}
               </td>
               <td className="border p-1">
                 {filter.params.marketPriceDeviation || 0} %
@@ -243,7 +257,7 @@ const FilterSubscriptionsTable: React.FC = () => {
               </td>
               <td className="border p-1">
                 <button
-                  onClick={() => handleEdit(filter.id)}
+                  onClick={() => onEditFilter(filter.params)}
                   title="Редактировать"
                 >
                   <PencilIcon className="h-5 w-5 text-yellow-600 hover:opacity-80 mx-auto cursor-pointer" />
