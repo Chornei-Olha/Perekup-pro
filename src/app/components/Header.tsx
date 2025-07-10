@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone, Instagram } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -67,6 +67,18 @@ export default function Header() {
 
         {/* Contact info + Logout */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-6">
+          {" "}
+          <a
+            href="https://www.instagram.com/karl_cars/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center hover:underline"
+          >
+            <Instagram className="h-5 w-5 mr-2" />
+            <span className="font-['Open_Sans'] font-light text-sm text-white">
+              @karl_cars
+            </span>
+          </a>
           <div className="flex items-center">
             <MapPin className="h-5 w-5 mr-2" />
             <span className="font-['Open_Sans'] font-light text-sm text-white">
@@ -91,7 +103,6 @@ export default function Header() {
               +38 (050) 044-11-32
             </span>
           </a>
-
           {pathname !== "/subscription" && (
             <button
               onClick={() => router.push("/subscription")}
@@ -112,7 +123,6 @@ export default function Header() {
               Выбрать тариф
             </button>
           )}
-
           {/* Logout button */}
           {!hideLogout && (
             <button
