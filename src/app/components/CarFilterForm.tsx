@@ -38,7 +38,7 @@ export const defaultFilterValues: CarSearchFilters = {
   sold: false,
   includeDealers: false,
   includeBanned: false,
-  state: undefined,
+  states: undefined,
   marketPriceDeviation: 0,
   period: undefined,
   sellerId: undefined,

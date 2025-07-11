@@ -227,8 +227,8 @@ const FilterSubscriptionsTable: FC<Props> = ({ onEditFilter }) => {
                 {filter.params.minMileage} – {filter.params.maxMileage}
               </td>
               <td className="border p-1 text-left">
-                {(filter.params.states || []).length > 0
-                  ? filter.params.states
+                {(filter.params.states ?? []).length > 0
+                  ? (filter.params.states ?? [])
                       .map(
                         (s) =>
                           ({
@@ -236,15 +236,12 @@ const FilterSubscriptionsTable: FC<Props> = ({ onEditFilter }) => {
                             2: "Пригнанные",
                             3: "Проданные",
                             4: "Заблокированные",
-                          }[s] || `#${s}`)
+                          }[s])
                       )
-                      .map((label, i) => <div key={i}>{label}</div>)
-                  : "–"}
+                      .join(", ")
+                  : "-"}
               </td>
 
-              {/* <td className="border p-1">
-                {filter.params.state === 1 ? "Целые" : "Любые"}
-              </td> */}
               <td className="border p-1">
                 <button
                   onClick={() => toggleEnabled(filter.id)}

@@ -110,10 +110,12 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       sold: formData.get("sold") === "on",
       includeDealers: formData.get("includeDealers") === "on",
       includeBanned: formData.get("includeBanned") === "on",
-      state:
-        formData.get("state") !== ""
-          ? Number(formData.get("state"))
-          : undefined,
+      // state:
+      //   formData.get("state") !== ""
+      //     ? Number(formData.get("state"))
+      //     : undefined,
+      states: formData.getAll("states").map((s) => Number(s)),
+
       marketPriceDeviation: Number(formData.get("deviation")) || 0,
       period:
         selectedPeriod.id !== 0
