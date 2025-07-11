@@ -164,6 +164,7 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const fd = new FormData(form);
+    const stateValues = fd.getAll("states").map((s) => Number(s));
 
     const filters: CarSearchFilters = {
       brands: selectedBrand && selectedBrand.id !== 0 ? [selectedBrand.id] : [],
@@ -184,7 +185,9 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
       sold: fd.get("sold") === "on",
       includeDealers: fd.get("includeDealers") === "on",
       includeBanned: fd.get("includeBanned") === "on",
-      state: fd.get("state") ? Number(fd.get("state")) : undefined,
+      states: stateValues.length ? stateValues : undefined,
+
+      // state: fd.get("state") ? Number(fd.get("state")) : undefined,
       marketPriceDeviation: Number(fd.get("deviation")) || 0,
       period:
         selectedPeriod.id !== 0
@@ -359,7 +362,7 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
             />
           </div>
 
-          <div className="space-y-1">
+          {/* <div className="space-y-1">
             <label>
               <input
                 name="paint"
@@ -409,6 +412,34 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
               />{" "}
               Заблокированные
             </label>
+          </div> */}
+          <div className="space-y-1">
+            <label>
+              <input
+                name="includeDealers"
+                type="checkbox"
+                defaultChecked={initialValues?.includeDealers}
+                className="mr-2"
+              />{" "}
+              Дилеры
+            </label>
+            <label className="font-medium block"></label>
+            {[
+              { id: 1, label: "Крашенные" },
+              { id: 2, label: "Пригнанные" },
+              { id: 3, label: "Проданные" },
+              { id: 4, label: "Заблокированные" },
+            ].map(({ id, label }) => (
+              <div key={id} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="states"
+                  value={id}
+                  defaultChecked={initialValues?.states?.includes(id)}
+                />
+                <span>{label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

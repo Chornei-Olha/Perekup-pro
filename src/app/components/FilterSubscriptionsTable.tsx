@@ -226,9 +226,25 @@ const FilterSubscriptionsTable: FC<Props> = ({ onEditFilter }) => {
               <td className="border p-1">
                 {filter.params.minMileage} – {filter.params.maxMileage}
               </td>
-              <td className="border p-1">
-                {filter.params.state === 1 ? "Целые" : "Любые"}
+              <td className="border p-1 text-left">
+                {(filter.params.states || []).length > 0
+                  ? filter.params.states
+                      .map(
+                        (s) =>
+                          ({
+                            1: "Крашенные",
+                            2: "Пригнанные",
+                            3: "Проданные",
+                            4: "Заблокированные",
+                          }[s] || `#${s}`)
+                      )
+                      .map((label, i) => <div key={i}>{label}</div>)
+                  : "–"}
               </td>
+
+              {/* <td className="border p-1">
+                {filter.params.state === 1 ? "Целые" : "Любые"}
+              </td> */}
               <td className="border p-1">
                 <button
                   onClick={() => toggleEnabled(filter.id)}
@@ -241,7 +257,7 @@ const FilterSubscriptionsTable: FC<Props> = ({ onEditFilter }) => {
               </td>
 
               <td className="border p-1">
-                {filter.params.includeDealers ? "Нет" : "Да"}
+                {filter.params.includeDealers ? "Да" : "Нет"}
               </td>
               <td className="border p-1">
                 {filter.params.marketPriceDeviation || 0} %
