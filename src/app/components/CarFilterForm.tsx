@@ -7,6 +7,13 @@ import {
   ListboxOptions,
   ListboxOption,
 } from "@headlessui/react";
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxOptions,
+  ComboboxOption,
+} from "@headlessui/react";
+
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { CarSearchFilters } from "@/lib/types";
 
@@ -86,6 +93,7 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
   const [selectedPeriod, setSelectedPeriod] = useState<Option>(
     periodOptions[0]
   );
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     fetch("/api/regions")
@@ -248,11 +256,57 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
     </div>
   );
 
+  const filteredBrands =
+    query === ""
+      ? brands
+      : brands.filter((brand) =>
+          brand.name.toLowerCase().includes(query.toLowerCase())
+        );
+  const renderBrandCombobox = () => (
+    <div>
+      <label className="font-medium block mb-1">Марка</label>
+      <Combobox value={selectedBrand} onChange={setSelectedBrand}>
+        <div className="relative">
+          <ComboboxInput
+            className="w-full border p-2 rounded bg-transparent text-left"
+            displayValue={(brand: Option) => brand?.name || ""}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Введите марку"
+          />
+          <ChevronUpDownIcon className="h-5 w-5 absolute right-2 top-2.5 text-gray-400" />
+          {filteredBrands.length > 0 && (
+            <ComboboxOptions className="absolute z-10 mt-1 w-full bg-white border rounded shadow-lg max-h-60 overflow-auto">
+              {filteredBrands.map((brand) => (
+                <ComboboxOption
+                  key={brand.id}
+                  value={brand}
+                  className={({ active }) =>
+                    `cursor-pointer px-4 py-2 text-black ${
+                      active ? "bg-gray-200" : "bg-white"
+                    }`
+                  }
+                >
+                  {({ selected }) => (
+                    <span className={`block ${selected ? "font-bold" : ""}`}>
+                      {brand.name}
+                    </span>
+                  )}
+                </ComboboxOption>
+              ))}
+            </ComboboxOptions>
+          )}
+        </div>
+      </Combobox>
+    </div>
+  );
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid sm:grid-cols-2 gap-6">
         <div className="space-y-4">
-          {renderListbox("Марка", brands, selectedBrand, setSelectedBrand)}
+          {renderBrandCombobox()}
+
+          {/* {renderListbox("Марка", brands, selectedBrand, setSelectedBrand)} */}
           {selectedBrand &&
             models.length > 0 &&
             renderListbox("Модель", models, selectedModel, setSelectedModel)}
