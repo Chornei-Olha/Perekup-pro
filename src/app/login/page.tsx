@@ -48,7 +48,7 @@ export default function LoginPage() {
       });
 
       if (res.status === 204) {
-        router.push("/subscription");
+        router.push("/");
       } else {
         setError("Неверный код");
       }

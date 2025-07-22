@@ -8,11 +8,14 @@ import { CarSearchFilters } from "@/lib/types";
 import Header from "../components/Header";
 import { useRouter } from "next/navigation";
 
+import { useSessionInfo } from "@/hooks/useSessionInfo"; // ✅ импорт хука
+
 const SubscriptionsPage = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [filterToEdit, setFilterToEdit] = useState<CarSearchFilters | null>(
     null
   );
+  const { loading: checkingSession } = useSessionInfo(); // ✅ вызов хука
 
   const handleAddFilter = async (filters: CarSearchFilters) => {
     try {
@@ -25,7 +28,8 @@ const SubscriptionsPage = () => {
     }
   };
   const router = useRouter();
-
+  if (checkingSession)
+    return <p className="text-white p-4">Проверка доступа...</p>; // ✅ прелоадер
   return (
     <section
       className="relative bg-cover bg-center text-white"
