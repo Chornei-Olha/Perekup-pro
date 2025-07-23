@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📦 ДЕПЛОЙ ПРОЕКТА NEXT.JS НА VPS
 
-## Getting Started
+🔹 Название проекта: Essence (Next.js 15 + Tailwind + Express)
+🔹 Что требуется: VPS с доступом по SSH, установленный Node.js (v18+)
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🔧 ШАГИ ПО УСТАНОВКЕ И ЗАПУСКУ
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1️⃣ Подключитесь по SSH к серверу:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+ssh user@IP_СЕРВЕРА
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+(или используйте Web-консоль в панели Hyperhost)
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+2️⃣ Разархивируйте проект:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+unzip essence.zip -d essence
+cd essence
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+3️⃣ Установите Node.js (если ещё не установлен):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+source ~/.bashrc
+nvm install --lts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Проверьте версии:
+
+node -v
+npm -v
+
+---
+
+4️⃣ Установите зависимости проекта:
+
+npm install
+
+---
+
+5️⃣ Создайте файл `.env.production`, если нужно (переменные окружения):
+
+Пример:
+
+SUPABASE_URL=https://...
+SUPABASE_KEY=...
+NEXT_PUBLIC_API_URL=https://example.com/api
+
+---
+
+6️⃣ Соберите проект:
+
+npm run build
+
+---
+
+7️⃣ Запустите проект:
+
+npm start
+
+После этого сайт будет доступен на http://localhost:3000
+
+---
+
+🌀 (РЕКОМЕНДУЕМО) Используйте PM2 для постоянной работы:
+
+npm install -g pm2
+pm2 start npm --name essence -- start
+pm2 save
+pm2 startup
+
+---
+
+🌐 (ОПЦИОНАЛЬНО) Настройте домен через NGINX:
+
+Пример конфига (если используется домен):
+
+server {
+listen 80;
+server_name yourdomain.com;
+
+      location / {
+          proxy_pass http://localhost:3000;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection 'upgrade';
+          proxy_set_header Host $host;
+          proxy_cache_bypass $http_upgrade;
+      }
+
+}
+
+Перезапуск NGINX:
+
+sudo nginx -t
+sudo systemctl restart nginx
+
+---
+
+🔒 (ОПЦИОНАЛЬНО) Установка SSL-сертификата:
+
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d yourdomain.com
+
+---
