@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const res = await fetch("https://perecup-pro.com/api/regions");
+    const res = await fetch("https://backend.perekup-pro.com.ua/api/regions");
 
     if (!res.ok) {
       throw new Error(

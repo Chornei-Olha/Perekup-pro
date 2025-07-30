@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
 
     // Получаем данные о машинах с API
     const carsResponse = await fetch(
-      "https://perecup-pro.com/api/cars/search.php",
+      "https://backend.perekup-pro.com.ua/api/cars/search.php",
       {
         method: "POST", // убедитесь, что API ожидает именно POST
         headers: {

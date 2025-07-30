@@ -3,7 +3,7 @@
 import { Brand, Model, Region, Car, CarSearchFilters } from "./types";
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://perecup-pro.com/api";
+  process.env.NEXT_PUBLIC_BASE_URL || "https://backend.perekup-pro.com.ua/api";
 
 export async function getBrands(): Promise<Brand[]> {
   try {

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const res = await fetch("https://perecup-pro.com/api/models/", {
+    const res = await fetch("https://backend.perekup-pro.com.ua/api/models/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

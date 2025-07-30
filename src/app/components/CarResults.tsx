@@ -71,7 +71,7 @@ export default function CarResults({ results }: Props) {
   useEffect(() => {
     if (selectedSellerId !== null) {
       setIsLoadingSellerCars(true);
-      fetch(`https://perecup-pro.com/api/cars/search.php`, {
+      fetch(`https://backend.perekup-pro.com.ua/api/cars/search.php`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ export default function CarResults({ results }: Props) {
   useEffect(() => {
     if (selectedCarIdForPrices !== null) {
       setIsLoadingPrices(true);
-      fetch(`https://perecup-pro.com/api/cars/prices`, {
+      fetch(`https://backend.perekup-pro.com.ua/api/cars/prices`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ carId: selectedCarIdForPrices }),
