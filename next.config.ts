@@ -3,6 +3,14 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "https://backend.perekup-pro.com.ua/api/:path*",
+      },
+    ];
+  },
   images: {
     domains: [
       "cdn0.riastatic.com",

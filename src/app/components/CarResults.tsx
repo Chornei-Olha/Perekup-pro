@@ -35,6 +35,8 @@ export default function CarResults({ results }: Props) {
   const itemsPerPage = 20;
   const listRef = useRef<HTMLDivElement>(null);
 
+  console.log(results);
+
   const totalPages = Math.ceil(results.length / itemsPerPage);
 
   const sortedResults = [...results].sort(
@@ -71,7 +73,7 @@ export default function CarResults({ results }: Props) {
   useEffect(() => {
     if (selectedSellerId !== null) {
       setIsLoadingSellerCars(true);
-      fetch(`https://backend.perekup-pro.com.ua/api/cars/search.php`, {
+      fetch(`https://backend.perekup-pro.com.ua/api/cars/search`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
