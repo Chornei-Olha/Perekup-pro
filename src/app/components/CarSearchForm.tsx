@@ -349,10 +349,10 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
             Пригнанные
           </label>
           <br />
-          <label>
+          {/* <label>
             <input name="sold" type="checkbox" className="mr-2" /> Проданные
           </label>
-          <br />
+          <br /> */}
           <label>
             <input name="includeDealers" type="checkbox" className="mr-2" />{" "}
             Включить диллеров

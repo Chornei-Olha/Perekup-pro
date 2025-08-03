@@ -481,7 +481,7 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
             {[
               { id: 1, label: "Крашенные" },
               { id: 2, label: "Пригнанные" },
-              { id: 3, label: "Проданные" },
+              // { id: 3, label: "Проданные" },
               { id: 4, label: "Заблокированные" },
             ].map(({ id, label }) => (
               <div key={id} className="flex items-center gap-2">

@@ -261,7 +261,7 @@ const FilterSubscriptionsTable: FC<Props> = ({ onEditFilter }) => {
               </td>
               <td className="border p-1">
                 <a
-                  href="#"
+                  href="https://t.me/Perekuppro7Bot"
                   title="Telegram"
                   className="text-blue-600 hover:opacity-80 inline-block"
                 >
