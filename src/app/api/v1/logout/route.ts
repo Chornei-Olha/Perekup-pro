@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const res = await fetch("https://car.dimzizmistom.com.ua/api/v1/logout", {
+  const res = await fetch("http://erlang.perekup-pro.com.ua/api/v1/logout", {
     method: "POST",
     headers: {
       cookie: req.headers.get("cookie") || "",

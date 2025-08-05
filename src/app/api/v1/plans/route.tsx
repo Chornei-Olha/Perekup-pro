@@ -4,7 +4,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
 
   try {
-    const res = await fetch("https://car.dimzizmistom.com.ua/api/v1/plans", {
+    const res = await fetch("http://erlang.perekup-pro.com.ua/api/v1/plans", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

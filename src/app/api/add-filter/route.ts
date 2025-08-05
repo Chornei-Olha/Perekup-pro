@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     console.log("📝 Тело запроса:", body);
 
     const res = await fetch(
-      "https://car.dimzizmistom.com.ua/api/v1/updates/filters/new",
+      "http://erlang.perekup-pro.com.ua/api/v1/updates/filters/new",
       {
         method: "POST",
         headers: {
