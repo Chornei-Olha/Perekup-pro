@@ -3,14 +3,17 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
-  const res = await fetch("http://erlang.perekup-pro.com.ua/api/v1/user/info", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      cookie: req.headers.get("cookie") || "",
-    },
-    body: JSON.stringify(body),
-  });
+  const res = await fetch(
+    "https://erlang.perekup-pro.com.ua/api/v1/user/info",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: req.headers.get("cookie") || "",
+      },
+      body: JSON.stringify(body),
+    }
+  );
 
   const response = new NextResponse(await res.text(), {
     status: res.status,

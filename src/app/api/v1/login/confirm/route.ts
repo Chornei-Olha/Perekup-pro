@@ -4,7 +4,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
 
   const res = await fetch(
-    "http://erlang.perekup-pro.com.ua/api/v1/login/confirm",
+    "https://erlang.perekup-pro.com.ua/api/v1/login/confirm",
     {
       method: "POST",
       headers: {

@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const res = await fetch(
-      "http://erlang.perekup-pro.com.ua/api/v1/updates/filters",
+      "https://erlang.perekup-pro.com.ua/api/v1/updates/filters",
       {
         method: "POST",
         headers: {

@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     console.log("📝 Тело запроса:", body);
 
     const res = await fetch(
-      "http://erlang.perekup-pro.com.ua/api/v1/updates/filters/new",
+      "https://erlang.perekup-pro.com.ua/api/v1/updates/filters/new",
       {
         method: "POST",
         headers: {

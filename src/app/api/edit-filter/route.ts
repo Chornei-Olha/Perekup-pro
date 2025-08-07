@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const res = await fetch(
-      "http://erlang.perekup-pro.com.ua/api/v1/updates/filters/edit",
+      "https://erlang.perekup-pro.com.ua/api/v1/updates/filters/edit",
       {
         method: "POST",
         headers: {

@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
     // Отправляем запрос к реальному API, проксируем куки
     const res = await fetch(
-      "http://erlang.perekup-pro.com.ua/api/v1/updates/filters",
+      "https://erlang.perekup-pro.com.ua/api/v1/updates/filters",
       {
         method: "POST",
         headers: {
