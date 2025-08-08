@@ -7,7 +7,7 @@ const BASE_URL =
 
 export async function getBrands(): Promise<Brand[]> {
   try {
-    const res = await fetch(`${BASE_URL}/brands/`);
+    const res = await fetch(`${BASE_URL}/brands/index.php`);
 
     if (!res.ok) {
       throw new Error(
@@ -41,7 +41,7 @@ export async function getRegions(): Promise<Region[]> {
 
 export async function getModels(brands: number[]): Promise<Model[]> {
   try {
-    const res = await fetch(`${BASE_URL}/models/`, {
+    const res = await fetch(`${BASE_URL}/models/index.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ brands }),
