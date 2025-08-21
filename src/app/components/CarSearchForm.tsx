@@ -49,6 +49,21 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
   const [selectedPeriod, setSelectedPeriod] = useState<Option>(
     periodOptions[0]
   );
+  const [selectedPaint, setSelectedPaint] = useState<"true" | "false" | "all">(
+    "all"
+  );
+  const [selectedTransfer, setSelectedTransfer] = useState<
+    "true" | "false" | "all"
+  >("all");
+  const [selectedStates, setSelectedStates] = useState<number[] | "all">("all");
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const values = Array.from(e.target.selectedOptions, (o) => o.value);
+    if (values.includes("all")) {
+      setSelectedStates("all");
+    } else {
+      setSelectedStates(values.map(Number));
+    }
+  };
   const [query, setQuery] = useState("");
 
   const gearboxOptions: Option[] = [
@@ -113,16 +128,23 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       maxMileage: Number(formData.get("maxMileage")) || undefined,
       gearbox: selectedGearbox ? selectedGearbox.id : undefined,
       fuel: selectedFuel ? selectedFuel.id : undefined,
-      paint: formData.get("paint") === "on",
-      transfer: formData.get("transfer") === "on",
+      paint:
+        selectedPaint === "all"
+          ? undefined
+          : selectedPaint === "true"
+          ? true
+          : false,
+      transfer:
+        selectedTransfer === "all"
+          ? undefined
+          : selectedTransfer === "true"
+          ? true
+          : false,
+      states: selectedStates === "all" ? undefined : selectedStates,
+
       sold: formData.get("sold") === "on",
       includeDealers: formData.get("includeDealers") === "on",
       includeBanned: formData.get("includeBanned") === "on",
-      // state:
-      //   formData.get("state") !== ""
-      //     ? Number(formData.get("state"))
-      //     : undefined,
-      states: formData.getAll("states").map((s) => Number(s)),
 
       marketPriceDeviation: Number(formData.get("deviation")) || 0,
       period:
@@ -223,7 +245,6 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
         <div className="space-y-4 sm:space-y-8 pt-8 pl-4 pr-4 sm:p-8 w-full sm:w-xl mx-auto">
           {renderBrandCombobox()}
 
-          {/* {renderListbox("Марка", brands, selectedBrand, setSelectedBrand)} */}
           {selectedBrand && selectedBrand.id !== 0 && models.length > 0 ? (
             renderListbox("Модель", models, selectedModel, setSelectedModel)
           ) : (
@@ -340,19 +361,63 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
             />
           </div>
 
-          <label>
-            <input name="paint" type="checkbox" className="mr-2" /> Крашенные
-          </label>
-          <br />
-          <label>
-            <input name="transfer" type="checkbox" className="mr-2" />{" "}
-            Пригнанные
-          </label>
-          <br />
-          {/* <label>
-            <input name="sold" type="checkbox" className="mr-2" /> Проданные
-          </label>
-          <br /> */}
+          <h3 className="font-['Inter'] font-medium block mb-1">Состояние</h3>
+          <div className="mb-3">
+            <select
+              name="states"
+              value={
+                selectedStates === "all" ? ["all"] : selectedStates.map(String)
+              }
+              onChange={handleStateChange}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
+            >
+              <option value="all">Показать все</option>
+              <option value={0}>Цілі</option>
+              <option value={1}>Не потребує ремонту</option>
+              <option value={2}>Після ДТП</option>
+            </select>
+          </div>
+
+          <div className="mb-3">
+            <select
+              value={selectedPaint}
+              onChange={(e) =>
+                setSelectedPaint(
+                  e.target.value === "true"
+                    ? "true"
+                    : e.target.value === "false"
+                    ? "false"
+                    : "all"
+                )
+              }
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
+            >
+              <option value="false">Только некрашенные</option>
+              <option value="true">Только крашенные</option>
+              <option value="all">Показать с крашенными</option>
+            </select>
+          </div>
+
+          <div className="mb-3">
+            <select
+              value={selectedTransfer}
+              onChange={(e) =>
+                setSelectedTransfer(
+                  e.target.value === "true"
+                    ? "true"
+                    : e.target.value === "false"
+                    ? "false"
+                    : "all"
+                )
+              }
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
+            >
+              <option value="false">Не показывать пригнанные</option>
+              <option value="true">Только пригнанные</option>
+              <option value="all">Показать с пригнанными</option>
+            </select>
+          </div>
+
           <label>
             <input name="includeDealers" type="checkbox" className="mr-2" />{" "}
             Включить диллеров
