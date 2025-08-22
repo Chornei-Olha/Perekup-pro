@@ -45,7 +45,7 @@ export const defaultFilterValues: CarSearchFilters = {
   sold: false,
   includeDealers: false,
   includeBanned: false,
-  states: undefined,
+  state: undefined,
   marketPriceDeviation: 0,
   period: undefined,
   sellerId: undefined,
@@ -172,7 +172,7 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const fd = new FormData(form);
-    const stateValues = fd.getAll("states").map((s) => Number(s));
+    const stateValues = fd.getAll("state").map((s) => Number(s));
 
     const filters: CarSearchFilters = {
       brands: selectedBrand && selectedBrand.id !== 0 ? [selectedBrand.id] : [],
@@ -193,7 +193,7 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
       sold: fd.get("sold") === "on",
       includeDealers: fd.get("includeDealers") === "on",
       includeBanned: fd.get("includeBanned") === "on",
-      states: stateValues.length ? stateValues : undefined,
+      state: stateValues.length ? stateValues : undefined,
 
       // state: fd.get("state") ? Number(fd.get("state")) : undefined,
       marketPriceDeviation: Number(fd.get("deviation")) || 0,
@@ -487,9 +487,9 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
               <div key={id} className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  name="states"
+                  name="state"
                   value={id}
-                  defaultChecked={initialValues?.states?.includes(id)}
+                  defaultChecked={initialValues?.state?.includes(id)}
                 />
                 <span>{label}</span>
               </div>

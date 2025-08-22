@@ -227,8 +227,8 @@ const FilterSubscriptionsTable: FC<Props> = ({ onEditFilter }) => {
                 {filter.params.minMileage} – {filter.params.maxMileage}
               </td>
               <td className="border p-1 text-left">
-                {(filter.params.states ?? []).length > 0
-                  ? (filter.params.states ?? [])
+                {(filter.params.state ?? []).length > 0
+                  ? (filter.params.state ?? [])
                       .map(
                         (s) =>
                           ({

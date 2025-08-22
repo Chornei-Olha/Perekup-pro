@@ -17,14 +17,14 @@ import {
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { CarSearchFilters } from "../../lib/types";
 
-type Option = { id: number; name: string; unit?: "hours" | "days" };
+type Option<T = number> = { id: T; name: string; unit?: "hours" | "days" };
 
 interface CarSearchFormProps {
   onSubmit: (filters: CarSearchFilters) => void;
   // defaultValues?: Partial<CarSearchFilters>;
 }
 
-const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
+export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
   const periodOptions: { id: number; name: string; unit: "hours" | "days" }[] =
     [
       { id: 0, name: "Весь период", unit: "days" },
@@ -35,6 +35,25 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       { id: 7, name: "7 дней", unit: "days" },
       { id: 30, name: "30 дней", unit: "days" },
     ];
+
+  const transferOptions: Option<boolean | "all">[] = [
+    { id: "all", name: "Показать с пригнанными" },
+    { id: true, name: "Только пригнанные" },
+    { id: false, name: "Не показывать пригнанные" },
+  ];
+
+  const paintOptions: Option<boolean | "all">[] = [
+    { id: "all", name: "Показать с крашенными" },
+    { id: true, name: "Только крашенные" },
+    { id: false, name: "Только некрашенные" },
+  ];
+
+  const stateOptions: Option<number | "all">[] = [
+    { id: "all", name: "Показать все" },
+    { id: 0, name: "Целые" },
+    { id: 1, name: "Не требует ремонта" },
+    { id: 2, name: "После ДТП" },
+  ];
 
   const [regions, setRegions] = useState<Option[]>([]);
   const [brands, setBrands] = useState<Option[]>([]);
@@ -49,21 +68,14 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
   const [selectedPeriod, setSelectedPeriod] = useState<Option>(
     periodOptions[0]
   );
-  const [selectedPaint, setSelectedPaint] = useState<"true" | "false" | "all">(
+
+  // как в твоей последней версии: boolean | "all"
+  const [selectedPaint, setSelectedPaint] = useState<"all" | boolean>("all");
+  const [selectedTransfer, setSelectedTransfer] = useState<"all" | boolean>(
     "all"
   );
-  const [selectedTransfer, setSelectedTransfer] = useState<
-    "true" | "false" | "all"
-  >("all");
-  const [selectedStates, setSelectedStates] = useState<number[] | "all">("all");
-  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const values = Array.from(e.target.selectedOptions, (o) => o.value);
-    if (values.includes("all")) {
-      setSelectedStates("all");
-    } else {
-      setSelectedStates(values.map(Number));
-    }
-  };
+  const [selectedState, setSelectedState] = useState<"all" | number>("all");
+
   const [query, setQuery] = useState("");
 
   const gearboxOptions: Option[] = [
@@ -128,19 +140,6 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       maxMileage: Number(formData.get("maxMileage")) || undefined,
       gearbox: selectedGearbox ? selectedGearbox.id : undefined,
       fuel: selectedFuel ? selectedFuel.id : undefined,
-      paint:
-        selectedPaint === "all"
-          ? undefined
-          : selectedPaint === "true"
-          ? true
-          : false,
-      transfer:
-        selectedTransfer === "all"
-          ? undefined
-          : selectedTransfer === "true"
-          ? true
-          : false,
-      states: selectedStates === "all" ? undefined : selectedStates,
 
       sold: formData.get("sold") === "on",
       includeDealers: formData.get("includeDealers") === "on",
@@ -155,14 +154,24 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
           : undefined,
     };
 
+    if (selectedPaint !== "all") {
+      data.paint = selectedPaint;
+    }
+    if (selectedTransfer !== "all") {
+      data.transfer = selectedTransfer;
+    }
+    if (selectedState !== "all") {
+      data.state = [selectedState];
+    }
+
     onSubmit(data);
   };
 
-  const renderListbox = (
+  const renderListbox = <T,>(
     label: string,
-    options: Option[],
-    selected: Option | null,
-    setSelected: (val: Option) => void
+    options: Option<T>[],
+    selected: Option<T> | null,
+    setSelected: (val: Option<T>) => void
   ) => (
     <div>
       <label className="font-['Inter'] font-medium block mb-1">{label}</label>
@@ -175,7 +184,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
           <ListboxOptions className="absolute z-10 mt-1 w-full bg-white border rounded shadow-lg max-h-60 overflow-auto">
             {options.map((option) => (
               <ListboxOption
-                key={option.id}
+                key={String(option.id)} // safe для number | string | boolean
                 value={option}
                 className={({ active }) =>
                   `cursor-pointer px-4 py-2 text-black ${
@@ -195,12 +204,14 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       </Listbox>
     </div>
   );
+
   const filteredBrands =
     query === ""
       ? brands
       : brands.filter((brand) =>
           brand.name.toLowerCase().includes(query.toLowerCase())
         );
+
   const renderBrandCombobox = () => (
     <div>
       <label className="font-medium block mb-1">Марка</label>
@@ -208,7 +219,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
         <div className="relative">
           <ComboboxInput
             className="w-full border p-2 rounded bg-transparent text-left"
-            displayValue={(brand: Option) => brand?.name || ""}
+            displayValue={(brand: Option<number>) => brand?.name || ""}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Введите марку"
           />
@@ -252,6 +263,7 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               Выберите марку для отображения моделей
             </p>
           )}
+
           {renderListbox("Регион", regions, selectedRegion, setSelectedRegion)}
 
           <div className="grid grid-cols-2 gap-4">
@@ -361,61 +373,31 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
             />
           </div>
 
-          <h3 className="font-['Inter'] font-medium block mb-1">Состояние</h3>
           <div className="mb-3">
-            <select
-              name="states"
-              value={
-                selectedStates === "all" ? ["all"] : selectedStates.map(String)
-              }
-              onChange={handleStateChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-            >
-              <option value="all">Показать все</option>
-              <option value={0}>Цілі</option>
-              <option value={1}>Не потребує ремонту</option>
-              <option value={2}>Після ДТП</option>
-            </select>
+            {renderListbox(
+              "Состояние",
+              stateOptions,
+              stateOptions.find((o) => o.id === selectedState) || null,
+              (val) => setSelectedState(val.id)
+            )}
           </div>
 
           <div className="mb-3">
-            <select
-              value={selectedPaint}
-              onChange={(e) =>
-                setSelectedPaint(
-                  e.target.value === "true"
-                    ? "true"
-                    : e.target.value === "false"
-                    ? "false"
-                    : "all"
-                )
-              }
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-            >
-              <option value="false">Только некрашенные</option>
-              <option value="true">Только крашенные</option>
-              <option value="all">Показать с крашенными</option>
-            </select>
+            {renderListbox(
+              "Окраска",
+              paintOptions,
+              paintOptions.find((o) => o.id === selectedPaint) || null,
+              (val) => setSelectedPaint(val.id)
+            )}
           </div>
 
           <div className="mb-3">
-            <select
-              value={selectedTransfer}
-              onChange={(e) =>
-                setSelectedTransfer(
-                  e.target.value === "true"
-                    ? "true"
-                    : e.target.value === "false"
-                    ? "false"
-                    : "all"
-                )
-              }
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-            >
-              <option value="false">Не показывать пригнанные</option>
-              <option value="true">Только пригнанные</option>
-              <option value="all">Показать с пригнанными</option>
-            </select>
+            {renderListbox(
+              "Пригнанные",
+              transferOptions,
+              transferOptions.find((o) => o.id === selectedTransfer) || null,
+              (val) => setSelectedTransfer(val.id)
+            )}
           </div>
 
           <label>
@@ -441,5 +423,3 @@ const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     </form>
   );
 };
-
-export default CarSearchForm;
