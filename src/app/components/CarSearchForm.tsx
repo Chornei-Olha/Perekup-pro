@@ -281,14 +281,21 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
             )}
           </div>
 
-          <label className="font-['Inter'] font-medium block mb-1">
-            % отклонения
-          </label>
-          <input
-            name="deviation"
-            type="number"
-            className="border p-2 rounded w-full"
-          />
+          <div className="relative group">
+            <label className="font-['Inter'] font-medium mb-1 flex items-center">
+              % отклонения
+              <span className="ml-2 text-gray-400 cursor-pointer">?</span>
+            </label>
+            <input
+              name="deviation"
+              type="number"
+              className="border p-2 rounded w-full"
+            />
+            <div className="absolute left-full ml-2 top-0 hidden group-hover:block bg-gray-300 text-red-800 text-xs rounded px-2 py-1 max-w-sm z-20">
+              Отклонение от рыночной цены можно задать в % или в $. Число 1–99 =
+              %, 100 и больше = $. Например, 10% покажет и 15%, и 20% и т.д.
+            </div>
+          </div>
 
           <div className="mt-4">
             {renderListbox(
@@ -318,7 +325,6 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               className="border p-2 rounded"
             />
           </div>
-
           <div className="grid grid-cols-3 gap-2">
             <label className="font-['Inter'] font-medium block mb-1">Год</label>
             <input
@@ -334,7 +340,6 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               className="border p-2 rounded"
             />
           </div>
-
           <div className="grid grid-cols-3 gap-2">
             <label className="font-['Inter'] font-medium block mb-1">
               Объем, см3
@@ -354,7 +359,6 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               className="border p-2 rounded"
             />
           </div>
-
           <div className="grid grid-cols-3 gap-2">
             <label className="font-['Inter'] font-medium block mb-1">
               Пробег
@@ -372,7 +376,6 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               className="border p-2 rounded"
             />
           </div>
-
           <div className="mb-3">
             {renderListbox(
               "Состояние",
@@ -381,7 +384,6 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               (val) => setSelectedState(val.id)
             )}
           </div>
-
           <div className="mb-3">
             {renderListbox(
               "Окраска",
@@ -390,7 +392,6 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               (val) => setSelectedPaint(val.id)
             )}
           </div>
-
           <div className="mb-3">
             {renderListbox(
               "Пригнанные",
@@ -399,16 +400,24 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               (val) => setSelectedTransfer(val.id)
             )}
           </div>
-
-          <label>
+          <label className="relative group flex items-center">
             <input name="includeDealers" type="checkbox" className="mr-2" />{" "}
             Включить диллеров
+            <span className="ml-2 text-gray-400 cursor-pointer">?</span>
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden group-hover:block bg-gray-300 text-red-800 text-xs rounded px-4 py-1 max-w-xl z-20">
+              Отображать объявления дилеров
+            </div>
           </label>
           <br />
-          <label>
+          <label className="relative group flex items-center">
             <input name="includeBanned" type="checkbox" className="mr-2" />{" "}
             Включить заблокированные
-          </label>
+            <span className="ml-2 text-gray-400 cursor-pointer">?</span>
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden group-hover:block bg-gray-300 text-red-800 text-xs rounded px-2 py-1 max-w-xl z-20">
+              В список заблокированных входят: объявления от лизинга, рассрочки,
+              нерастаможенных авто, нового закона и просто фейковых объявлений
+            </div>
+          </label>{" "}
         </div>
       </div>
 
