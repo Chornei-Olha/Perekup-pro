@@ -117,15 +117,15 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
   }, []);
 
   // Когда регионы загружены, устанавливаем выбранный регион из URL
-  useEffect(() => {
-    if (regions.length === 0) return;
+  const searchParamsString = searchParams.toString();
 
+  useEffect(() => {
     const paramsObj = Object.fromEntries(searchParams.entries());
     if (paramsObj.region) {
       const region = regions.find((r) => r.id === Number(paramsObj.region));
       if (region) setSelectedRegion(region);
     }
-  }, [regions, searchParams.toString()]);
+  }, [regions, searchParamsString]);
 
   // Загружаем модели при выборе бренда
   useEffect(() => {
@@ -242,8 +242,10 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     const data: CarSearchFilters = {
       brands: selectedBrand && selectedBrand.id !== 0 ? [selectedBrand.id] : [],
       models: selectedModel ? [selectedModel.id] : [],
-      // region: selectedRegion ? selectedRegion.id : undefined,
-      region: selectedRegion?.id !== 0 ? selectedRegion.id : undefined,
+      region:
+        selectedRegion && selectedRegion.id !== 0
+          ? selectedRegion.id
+          : undefined,
 
       minPrice: Number(formData.get("minPrice")) || undefined,
       maxPrice: Number(formData.get("maxPrice")) || undefined,

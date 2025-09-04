@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { searchCars } from "@/lib/api";
 import CarResults from "@/app/components/CarResults";
 import { CarSearchForm } from "@/app/components/CarSearchForm";
@@ -8,38 +8,33 @@ import Top50Slider from "@/app/components/Slider";
 import { Car, CarSearchFilters } from "@/lib/types";
 import Header from "@/app/components/Header";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSessionInfo } from "@/hooks/useSessionInfo"; // ✅ импорт хука
+import { useSessionInfo } from "@/hooks/useSessionInfo";
 
-export default function HomePage() {
+function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [results, setResults] = useState<Car[]>([]);
   const [loading, setLoading] = useState(false);
-  const { loading: checkingSession } = useSessionInfo(); // ✅ вызов хука
 
   const handleSearch = async (filters: CarSearchFilters) => {
-    // setLoading(true);
-    // const cars = await searchCars(filters);
-    // setResults(cars);
-    // setLoading(false);
+    const entries: [string, string][] = Object.entries(filters)
+      .filter(([, val]) => val !== undefined && val !== null)
+      .map(([key, val]) => {
+        if (Array.isArray(val)) return [key, val.join(",")];
+        return [key, String(val)];
+      });
 
-    // обновляем URL, чтобы можно было поделиться ссылкой
-    const params = new URLSearchParams(filters as any).toString();
+    const params = new URLSearchParams(entries).toString();
     router.push(`/search?${params}`);
   };
 
-  // 🚀 Загружаем машины, если есть параметры в URL
   useEffect(() => {
     if (!searchParams) return;
 
-    // Превращаем URLSearchParams в объект
     const paramsObj = Object.fromEntries(searchParams.entries());
-
-    // Если параметры пустые, ничего не делаем
     if (Object.keys(paramsObj).length === 0) return;
 
-    // Приводим к нужным типам
     const filters: CarSearchFilters = {
       brands: paramsObj.brands
         ? paramsObj.brands.split(",").map((b) => Number(b))
@@ -56,7 +51,6 @@ export default function HomePage() {
     };
 
     setLoading(true);
-
     searchCars(filters)
       .then((cars) => setResults(cars))
       .catch((err) => {
@@ -66,8 +60,25 @@ export default function HomePage() {
       .finally(() => setLoading(false));
   }, [searchParams]);
 
-  if (checkingSession)
-    return <p className="text-white p-4">Проверка доступа...</p>; // ✅ прелоадер
+  return (
+    <>
+      <CarSearchForm onSubmit={handleSearch} />
+      <Top50Slider />
+      {loading ? (
+        <p className="pl-16 pb-16 text-xl">Загрузка...</p>
+      ) : (
+        <CarResults results={results} />
+      )}
+    </>
+  );
+}
+
+export default function HomePage() {
+  const { loading: checkingSession } = useSessionInfo();
+
+  if (checkingSession) {
+    return <p className="text-white p-4">Проверка доступа...</p>;
+  }
 
   return (
     <section
@@ -80,19 +91,16 @@ export default function HomePage() {
       <Header />
       <div className="flex justify-end pt-4 px-4 sm:px-16">
         <button
-          onClick={() => router.push("/subscriptions")}
+          onClick={() => location.assign("/subscriptions")}
           className="font-['Inter'] font-extralight text-[10px] sm:text-[15px] bg-[#9D0D14] hover:bg-red-700 transition px-4 py-2 rounded-[20px] text-white"
         >
           Задать фильтры для уведомлений
         </button>
       </div>
-      <CarSearchForm onSubmit={handleSearch} />
-      <Top50Slider />
-      {loading ? (
-        <p className="pl-16 pb-16 text-xl">Загрузка...</p>
-      ) : (
-        <CarResults results={results} />
-      )}
+
+      <Suspense fallback={<p className="text-white p-4">Загрузка...</p>}>
+        <SearchContent />
+      </Suspense>
     </section>
   );
 }

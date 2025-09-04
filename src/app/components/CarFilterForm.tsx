@@ -52,30 +52,30 @@ export const defaultFilterValues: CarSearchFilters = {
   enabled: true,
 };
 
+const periodOptions: Option[] = [
+  { id: 0, name: "Весь период", unit: "days" },
+  { id: 1, name: "1 час", unit: "hours" },
+  { id: 3, name: "3 часа", unit: "hours" },
+  { id: 1, name: "1 день", unit: "days" },
+  { id: 3, name: "3 дня", unit: "days" },
+  { id: 7, name: "7 дней", unit: "days" },
+  { id: 30, name: "30 дней", unit: "days" },
+];
+
+const gearboxOptions: Option[] = [
+  { id: 0, name: "Механика" },
+  { id: 1, name: "Автомат" },
+];
+
+const fuelOptions: Option[] = [
+  { id: 0, name: "Бензин" },
+  { id: 1, name: "Дизель" },
+  { id: 2, name: "Электро" },
+  { id: 3, name: "Гибрид" },
+  { id: 4, name: "Другой" },
+];
+
 const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
-  const periodOptions: Option[] = [
-    { id: 0, name: "Весь период", unit: "days" },
-    { id: 1, name: "1 час", unit: "hours" },
-    { id: 3, name: "3 часа", unit: "hours" },
-    { id: 1, name: "1 день", unit: "days" },
-    { id: 3, name: "3 дня", unit: "days" },
-    { id: 7, name: "7 дней", unit: "days" },
-    { id: 30, name: "30 дней", unit: "days" },
-  ];
-
-  const gearboxOptions: Option[] = [
-    { id: 0, name: "Механика" },
-    { id: 1, name: "Автомат" },
-  ];
-
-  const fuelOptions: Option[] = [
-    { id: 0, name: "Бензин" },
-    { id: 1, name: "Дизель" },
-    { id: 2, name: "Электро" },
-    { id: 3, name: "Гибрид" },
-    { id: 4, name: "Другой" },
-  ];
-
   const [regions, setRegions] = useState<Option[]>([]);
   const [brands, setBrands] = useState<Option[]>([]);
   const [models, setModels] = useState<Option[]>([]);
