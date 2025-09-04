@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+
 import {
   Listbox,
   ListboxButton,
@@ -21,10 +23,12 @@ type Option<T = number> = { id: T; name: string; unit?: "hours" | "days" };
 
 interface CarSearchFormProps {
   onSubmit: (filters: CarSearchFilters) => void;
-  // defaultValues?: Partial<CarSearchFilters>;
 }
 
 export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const periodOptions: { id: number; name: string; unit: "hours" | "days" }[] =
     [
       { id: 0, name: "Весь период", unit: "days" },
@@ -69,7 +73,6 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     periodOptions[0]
   );
 
-  // как в твоей последней версии: boolean | "all"
   const [selectedPaint, setSelectedPaint] = useState<"all" | boolean>("all");
   const [selectedTransfer, setSelectedTransfer] = useState<"all" | boolean>(
     "all"
@@ -91,6 +94,18 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     { id: 4, name: "Другой" },
   ];
 
+  const [minPrice, setMinPrice] = useState(1000);
+  const [maxPrice, setMaxPrice] = useState(100000);
+  const [minYear, setMinYear] = useState(2000);
+  const [maxYear, setMaxYear] = useState(2025);
+
+  const [minEngine, setMinEngine] = useState(0);
+  const [maxEngine, setMaxEngine] = useState(6.5);
+  const [minMileage, setMinMileage] = useState(100);
+  const [maxMileage, setMaxMileage] = useState(1000000);
+  const [urlModelId, setUrlModelId] = useState<number | null>(null);
+
+  // Загружаем данные брендов и регионов
   useEffect(() => {
     fetch("/api/regions")
       .then((res) => res.json())
@@ -101,6 +116,18 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       .then((data) => setBrands([{ id: 0, name: "Все марки" }, ...data]));
   }, []);
 
+  // Когда регионы загружены, устанавливаем выбранный регион из URL
+  useEffect(() => {
+    if (regions.length === 0) return;
+
+    const paramsObj = Object.fromEntries(searchParams.entries());
+    if (paramsObj.region) {
+      const region = regions.find((r) => r.id === Number(paramsObj.region));
+      if (region) setSelectedRegion(region);
+    }
+  }, [regions, searchParams.toString()]);
+
+  // Загружаем модели при выборе бренда
   useEffect(() => {
     if (selectedBrand && selectedBrand.id !== 0) {
       fetch("/api/models/", {
@@ -121,6 +148,92 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     }
   }, [selectedBrand]);
 
+  // Инициализация значений из URL
+  useEffect(() => {
+    const paramsObj = Object.fromEntries(searchParams.entries());
+    // Цены
+    if (paramsObj.minPrice) setMinPrice(Number(paramsObj.minPrice));
+    if (paramsObj.maxPrice) setMaxPrice(Number(paramsObj.maxPrice));
+
+    // Годы
+    if (paramsObj.minYear) setMinYear(Number(paramsObj.minYear));
+    if (paramsObj.maxYear) setMaxYear(Number(paramsObj.maxYear));
+
+    // Можно аналогично для объема и пробега
+    if (paramsObj.minEngine) setMinEngine(Number(paramsObj.minEngine));
+    if (paramsObj.maxEngine) setMaxEngine(Number(paramsObj.maxEngine));
+    if (paramsObj.minMileage) setMinMileage(Number(paramsObj.minMileage));
+    if (paramsObj.maxMileage) setMaxMileage(Number(paramsObj.maxMileage));
+
+    if (!selectedBrand) {
+      if (paramsObj.brands) {
+        const brandIds = paramsObj.brands.split(",").map((b) => Number(b));
+        const brand = brands.find((b) => brandIds.includes(b.id));
+        if (brand) setSelectedBrand(brand);
+      }
+    }
+
+    if (paramsObj.models) {
+      const modelIds = paramsObj.models.split(",").map((m) => Number(m));
+      if (modelIds.length > 0) {
+        setUrlModelId(modelIds[0]); // запоминаем модель из URL
+      }
+    }
+
+    if (paramsObj.region) {
+      const region = regions.find((r) => r.id === Number(paramsObj.region));
+      if (region) setSelectedRegion(region);
+    }
+
+    if (paramsObj.gearbox) {
+      const gearbox = gearboxOptions.find(
+        (g) => g.id === Number(paramsObj.gearbox)
+      );
+      if (gearbox) setSelectedGearbox(gearbox);
+    }
+
+    if (paramsObj.fuel) {
+      const fuel = fuelOptions.find((f) => f.id === Number(paramsObj.fuel));
+      if (fuel) setSelectedFuel(fuel);
+    }
+
+    if (paramsObj.period) {
+      const period = periodOptions.find(
+        (p) => p.id === Number(paramsObj.period)
+      );
+      if (period) setSelectedPeriod(period);
+    }
+
+    if (paramsObj.paint) {
+      const paint = paramsObj.paint;
+      if (paint === "true") setSelectedPaint(true);
+      else if (paint === "false") setSelectedPaint(false);
+      else setSelectedPaint("all");
+    }
+
+    if (paramsObj.transfer) {
+      const transfer = paramsObj.transfer;
+      if (transfer === "true") setSelectedTransfer(true);
+      else if (transfer === "false") setSelectedTransfer(false);
+      else setSelectedTransfer("all");
+    }
+
+    if (paramsObj.state) {
+      const state = Number(paramsObj.state);
+      if (!isNaN(state)) setSelectedState(state);
+    }
+  }, [searchParams.toString(), brands, models, regions]);
+
+  useEffect(() => {
+    if (urlModelId && models.length > 0) {
+      const model = models.find((m) => m.id === urlModelId);
+      if (model) {
+        setSelectedModel(model);
+      }
+      setUrlModelId(null); // очистка, чтобы не зациклиться
+    }
+  }, [urlModelId, models]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
@@ -129,7 +242,9 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     const data: CarSearchFilters = {
       brands: selectedBrand && selectedBrand.id !== 0 ? [selectedBrand.id] : [],
       models: selectedModel ? [selectedModel.id] : [],
-      region: selectedRegion ? selectedRegion.id : undefined,
+      // region: selectedRegion ? selectedRegion.id : undefined,
+      region: selectedRegion?.id !== 0 ? selectedRegion.id : undefined,
+
       minPrice: Number(formData.get("minPrice")) || undefined,
       maxPrice: Number(formData.get("maxPrice")) || undefined,
       minYear: Number(formData.get("minYear")),
@@ -140,11 +255,9 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       maxMileage: Number(formData.get("maxMileage")) || undefined,
       gearbox: selectedGearbox ? selectedGearbox.id : undefined,
       fuel: selectedFuel ? selectedFuel.id : undefined,
-
       sold: formData.get("sold") === "on",
       includeDealers: formData.get("includeDealers") === "on",
       includeBanned: formData.get("includeBanned") === "on",
-
       marketPriceDeviation: Number(formData.get("deviation")) || 0,
       period:
         selectedPeriod.id !== 0
@@ -154,17 +267,43 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
           : undefined,
     };
 
-    if (selectedPaint !== "all") {
-      data.paint = selectedPaint;
-    }
-    if (selectedTransfer !== "all") {
-      data.transfer = selectedTransfer;
-    }
-    if (selectedState !== "all") {
-      data.state = [selectedState];
-    }
+    if (selectedPaint !== "all") data.paint = selectedPaint;
+    if (selectedTransfer !== "all") data.transfer = selectedTransfer;
+    if (selectedState !== "all") data.state = [selectedState];
 
     onSubmit(data);
+
+    const params = new URLSearchParams();
+
+    if (data.brands?.length) params.set("brands", data.brands.join(","));
+    if (data.models?.length) params.set("models", data.models.join(","));
+    // if (data.region) params.set("region", String(data.region));
+    if (data.region !== undefined) params.set("region", String(data.region));
+
+    if (data.minPrice) params.set("minPrice", String(data.minPrice));
+    if (data.maxPrice) params.set("maxPrice", String(data.maxPrice));
+    if (data.minYear) params.set("minYear", String(data.minYear));
+    if (data.maxYear) params.set("maxYear", String(data.maxYear));
+    if (data.minEngineVolume)
+      params.set("minEngine", String(data.minEngineVolume));
+    if (data.maxEngineVolume)
+      params.set("maxEngine", String(data.maxEngineVolume));
+    if (data.minMileage) params.set("minMileage", String(data.minMileage));
+    if (data.maxMileage) params.set("maxMileage", String(data.maxMileage));
+    if (data.gearbox !== undefined) params.set("gearbox", String(data.gearbox));
+    if (data.fuel !== undefined) params.set("fuel", String(data.fuel));
+    if (data.paint !== undefined) params.set("paint", String(data.paint));
+    if (data.transfer !== undefined)
+      params.set("transfer", String(data.transfer));
+    if (data.state) params.set("state", data.state.join(","));
+    if (data.period) params.set("period", String(data.period));
+    if (data.includeDealers) params.set("includeDealers", "true");
+    if (data.includeBanned) params.set("includeBanned", "true");
+    if (data.sold) params.set("sold", "true");
+    if (data.marketPriceDeviation)
+      params.set("deviation", String(data.marketPriceDeviation));
+
+    router.push(`?${params.toString()}`);
   };
 
   const renderListbox = <T,>(
@@ -184,7 +323,7 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
           <ListboxOptions className="absolute z-10 mt-1 w-full bg-white border rounded shadow-lg max-h-60 overflow-auto">
             {options.map((option) => (
               <ListboxOption
-                key={String(option.id)} // safe для number | string | boolean
+                key={String(option.id)}
                 value={option}
                 className={({ active }) =>
                   `cursor-pointer px-4 py-2 text-black ${
@@ -215,12 +354,24 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
   const renderBrandCombobox = () => (
     <div>
       <label className="font-medium block mb-1">Марка</label>
-      <Combobox value={selectedBrand} onChange={setSelectedBrand}>
+      <Combobox
+        value={selectedBrand}
+        onChange={(brand) => {
+          setSelectedBrand(brand);
+          setSelectedModel(null); // сброс модели при смене бренда
+          setQuery(""); // очищаем поле после выбора
+        }}
+      >
         <div className="relative">
           <ComboboxInput
             className="w-full border p-2 rounded bg-transparent text-left"
-            displayValue={(brand: Option<number>) => brand?.name || ""}
-            onChange={(event) => setQuery(event.target.value)}
+            displayValue={(brand: Option<number> | null) =>
+              query || brand?.name || ""
+            }
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setSelectedBrand(null); // временно сбрасываем выбранный бренд
+            }}
             placeholder="Введите марку"
           />
           <ChevronUpDownIcon className="h-5 w-5 absolute right-2 top-2.5 text-gray-400" />
@@ -314,13 +465,15 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
             </label>
             <input
               name="minPrice"
-              defaultValue={1000}
+              value={minPrice}
+              onChange={(e) => setMinPrice(Number(e.target.value))}
               type="number"
               className="border p-2 rounded"
             />
             <input
               name="maxPrice"
-              defaultValue={100000}
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(Number(e.target.value))}
               type="number"
               className="border p-2 rounded"
             />
@@ -329,13 +482,15 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
             <label className="font-['Inter'] font-medium block mb-1">Год</label>
             <input
               name="minYear"
-              defaultValue={2000}
+              value={minYear}
+              onChange={(e) => setMinYear(Number(e.target.value))}
               type="number"
               className="border p-2 rounded"
             />
             <input
               name="maxYear"
-              defaultValue={2025}
+              value={maxYear}
+              onChange={(e) => setMaxYear(Number(e.target.value))}
               type="number"
               className="border p-2 rounded"
             />
@@ -346,14 +501,16 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
             </label>
             <input
               name="minEngine"
-              defaultValue={0}
+              value={minEngine}
+              onChange={(e) => setMinEngine(Number(e.target.value))}
               type="number"
               step="0.1"
               className="border p-2 rounded"
             />
             <input
               name="maxEngine"
-              defaultValue={6.5}
+              value={maxEngine}
+              onChange={(e) => setMaxEngine(Number(e.target.value))}
               type="number"
               step="0.1"
               className="border p-2 rounded"
@@ -365,13 +522,15 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
             </label>
             <input
               name="minMileage"
-              defaultValue={100}
+              value={minMileage}
+              onChange={(e) => setMinMileage(Number(e.target.value))}
               type="number"
               className="border p-2 rounded"
             />
             <input
               name="maxMileage"
-              defaultValue={1000000}
+              value={maxMileage}
+              onChange={(e) => setMaxMileage(Number(e.target.value))}
               type="number"
               className="border p-2 rounded"
             />

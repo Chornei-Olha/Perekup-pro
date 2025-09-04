@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     const carsResponse = await fetch(
       "https://backend.perekup-pro.com.ua/api/cars/search.php",
       {
-        method: "POST", // убедитесь, что API ожидает именно POST
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
