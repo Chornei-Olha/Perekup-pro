@@ -48,6 +48,18 @@ function SearchContent() {
       maxYear: paramsObj.maxYear
         ? Number(paramsObj.maxYear)
         : new Date().getFullYear(),
+      fuel:
+        paramsObj.fuel !== undefined && paramsObj.fuel !== ""
+          ? Number(paramsObj.fuel)
+          : undefined,
+      region:
+        paramsObj.region !== undefined && paramsObj.region !== ""
+          ? Number(paramsObj.region)
+          : undefined,
+      gearbox:
+        paramsObj.gearbox !== undefined && paramsObj.gearbox !== ""
+          ? Number(paramsObj.gearbox)
+          : undefined,
     };
 
     setLoading(true);
