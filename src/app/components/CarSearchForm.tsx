@@ -222,6 +222,13 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       const state = Number(paramsObj.state);
       if (!isNaN(state)) setSelectedState(state);
     }
+
+    if (paramsObj.period) {
+      const period = periodOptions.find(
+        (p) => p.id === Number(paramsObj.period)
+      );
+      if (period) setSelectedPeriod(period);
+    }
   }, [searchParams.toString(), brands, models, regions]);
 
   useEffect(() => {

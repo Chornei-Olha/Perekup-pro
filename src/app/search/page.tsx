@@ -26,7 +26,7 @@ function SearchContent() {
       });
 
     const params = new URLSearchParams(entries).toString();
-    router.push(`/search?${params}`);
+    router.push(`/search?${params}#results`);
   };
 
   useEffect(() => {
@@ -60,6 +60,10 @@ function SearchContent() {
         paramsObj.gearbox !== undefined && paramsObj.gearbox !== ""
           ? Number(paramsObj.gearbox)
           : undefined,
+      period:
+        paramsObj.period !== undefined && paramsObj.period !== ""
+          ? Number(paramsObj.period)
+          : undefined,
     };
 
     setLoading(true);
@@ -72,15 +76,33 @@ function SearchContent() {
       .finally(() => setLoading(false));
   }, [searchParams]);
 
+  // 👇 Скролл к результатам
+
+  useEffect(() => {
+    const paramsObj = Object.fromEntries(searchParams.entries());
+    const hasFilters = Object.keys(paramsObj).length > 0;
+    if (!hasFilters) return; // если фильтров нет — не скроллим
+
+    const el = document.getElementById("results");
+    if (!el) return;
+
+    // Используем setTimeout 0, чтобы DOM точно успел отрендериться
+    setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth" });
+    }, 0);
+  }, [searchParams, results, loading]);
+
   return (
     <>
       <CarSearchForm onSubmit={handleSearch} />
       <Top50Slider />
-      {loading ? (
-        <p className="pl-16 pb-16 text-xl">Загрузка...</p>
-      ) : (
-        <CarResults results={results} />
-      )}
+      <div id="results">
+        {loading ? (
+          <p className="pl-16 pb-16 text-xl">Загрузка...</p>
+        ) : (
+          <CarResults results={results} />
+        )}
+      </div>
     </>
   );
 }

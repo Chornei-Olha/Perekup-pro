@@ -5,7 +5,7 @@ import { Car } from "@/lib/types";
 
 type Props = {
   results: Car[];
-};
+} & Omit<React.HTMLAttributes<HTMLDivElement>, "results">;
 
 function getGearboxLabel(code: number) {
   return code === 0 ? "МТ" : code === 1 ? "АТ" : "—";
