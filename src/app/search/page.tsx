@@ -64,28 +64,45 @@ function SearchContent() {
         paramsObj.period !== undefined && paramsObj.period !== ""
           ? Number(paramsObj.period)
           : undefined,
-      // marketPriceDeviation:
-      //   paramsObj.marketPriceDeviation !== undefined
-      //     ? Number(paramsObj.marketPriceDeviation)
-      //     : undefined,
+      marketPriceDeviation:
+        paramsObj.marketPriceDeviation !== undefined
+          ? Number(paramsObj.marketPriceDeviation)
+          : undefined,
 
-      paint:
-        paramsObj.paint === "true"
-          ? true
-          : paramsObj.paint === "false"
-          ? false
-          : undefined,
-      transfer:
-        paramsObj.transfer === "true"
-          ? true
-          : paramsObj.transfer === "false"
-          ? false
-          : undefined,
-      state:
-        paramsObj.state && paramsObj.state !== "all"
-          ? paramsObj.state.split(",").map(Number)
-          : undefined,
+      minMileage: Number(paramsObj.minMileage) || 0,
+      maxMileage: Number(paramsObj.maxMileage) || undefined,
+
+      minEngineVolume: Number(paramsObj.minEngine) || 0,
+      maxEngineVolume: Number(paramsObj.maxEngine) || undefined,
+
+      // paint:
+      //   paramsObj.paint === "true"
+      //     ? true
+      //     : paramsObj.paint === "false"
+      //     ? false
+      //     : undefined,
+      // transfer:
+      //   paramsObj.transfer === "true"
+      //     ? true
+      //     : paramsObj.transfer === "false"
+      //     ? false
+      //     : undefined,
+      // state:
+      //   paramsObj.state && paramsObj.state !== "all"
+      //     ? paramsObj.state.split(",").map(Number)
+      //     : undefined,
     };
+
+    if (paramsObj.paint) {
+      filters.paint = Boolean(paramsObj.paint);
+    }
+
+    if (paramsObj.transfer) {
+      filters.transfer = Boolean(paramsObj.transfer);
+    }
+    if (paramsObj.state) {
+      filters.state = Number(paramsObj.state);
+    }
 
     setLoading(true);
     searchCars(filters)

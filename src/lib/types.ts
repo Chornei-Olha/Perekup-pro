@@ -42,7 +42,7 @@ export interface CarSearchFilters {
   sold?: boolean;
   includeDealers?: boolean;
   includeBanned?: boolean;
-  state?: number[];
+  state?: number;
   marketPriceDeviation?: number;
   period?: number;
   sellerId?: number;

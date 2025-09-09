@@ -70,6 +70,7 @@ export async function getModels(brands: number[]): Promise<Model[]> {
 
 export async function searchCars(filters: CarSearchFilters): Promise<Car[]> {
   try {
+    // console.log("Filter -- ", filters);
     const res = await fetch(`${BASE_URL}/cars/search.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
