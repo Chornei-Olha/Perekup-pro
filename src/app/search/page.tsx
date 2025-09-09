@@ -64,6 +64,27 @@ function SearchContent() {
         paramsObj.period !== undefined && paramsObj.period !== ""
           ? Number(paramsObj.period)
           : undefined,
+      // marketPriceDeviation:
+      //   paramsObj.marketPriceDeviation !== undefined
+      //     ? Number(paramsObj.marketPriceDeviation)
+      //     : undefined,
+
+      paint:
+        paramsObj.paint === "true"
+          ? true
+          : paramsObj.paint === "false"
+          ? false
+          : undefined,
+      transfer:
+        paramsObj.transfer === "true"
+          ? true
+          : paramsObj.transfer === "false"
+          ? false
+          : undefined,
+      state:
+        paramsObj.state && paramsObj.state !== "all"
+          ? paramsObj.state.split(",").map(Number)
+          : undefined,
     };
 
     setLoading(true);

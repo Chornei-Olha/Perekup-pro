@@ -7,7 +7,7 @@ export type Car = {
   title: string;
   year: number;
   price: number;
-  marketPrice: number;
+  marketPriceDeviation: number;
   mileage: number;
   engineVolume: number;
   gearbox: number;

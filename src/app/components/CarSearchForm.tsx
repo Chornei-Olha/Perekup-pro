@@ -72,6 +72,9 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
   const [selectedPeriod, setSelectedPeriod] = useState<Option>(
     periodOptions[0]
   );
+  const [marketPriceDeviation, setMarketPriceDeviation] = useState<
+    number | undefined
+  >(undefined);
 
   const [selectedPaint, setSelectedPaint] = useState<"all" | boolean>("all");
   const [selectedTransfer, setSelectedTransfer] = useState<"all" | boolean>(
@@ -164,6 +167,12 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     if (paramsObj.maxEngine) setMaxEngine(Number(paramsObj.maxEngine));
     if (paramsObj.minMileage) setMinMileage(Number(paramsObj.minMileage));
     if (paramsObj.maxMileage) setMaxMileage(Number(paramsObj.maxMileage));
+    if (
+      paramsObj.marketPriceDeviation !== undefined &&
+      paramsObj.marketPriceDeviation !== ""
+    ) {
+      setMarketPriceDeviation(Number(paramsObj.marketPriceDeviation));
+    }
 
     if (!selectedBrand) {
       if (paramsObj.brands) {
@@ -267,7 +276,10 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
       sold: formData.get("sold") === "on",
       includeDealers: formData.get("includeDealers") === "on",
       includeBanned: formData.get("includeBanned") === "on",
-      marketPriceDeviation: Number(formData.get("deviation")) || 0,
+      marketPriceDeviation:
+        marketPriceDeviation !== undefined && !isNaN(marketPriceDeviation)
+          ? marketPriceDeviation
+          : undefined,
       period:
         selectedPeriod.id !== 0
           ? selectedPeriod.unit === "days"
@@ -309,8 +321,9 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     if (data.includeDealers) params.set("includeDealers", "true");
     if (data.includeBanned) params.set("includeBanned", "true");
     if (data.sold) params.set("sold", "true");
-    if (data.marketPriceDeviation)
-      params.set("deviation", String(data.marketPriceDeviation));
+    if (data.marketPriceDeviation !== undefined) {
+      params.set("marketPriceDeviation", String(data.marketPriceDeviation));
+    }
 
     router.push(`?${params.toString()}`);
   };
@@ -447,8 +460,13 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
               <span className="ml-2 text-gray-400 cursor-pointer">?</span>
             </label>
             <input
-              name="deviation"
+              name="marketPriceDeviation"
               type="number"
+              value={marketPriceDeviation ?? ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                setMarketPriceDeviation(val === "" ? undefined : Number(val));
+              }}
               className="border p-2 rounded w-full"
             />
             <div className="absolute left-full ml-2 top-0 hidden group-hover:block bg-gray-300 text-red-800 text-xs rounded px-2 py-1 max-w-sm z-20">
