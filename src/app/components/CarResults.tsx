@@ -12,7 +12,7 @@ function getGearboxLabel(code: number) {
 }
 
 function getPriceDiff(price: number, marketPrice: number) {
-  const diff = price - marketPrice;
+  const diff = Number(price) - Number(marketPrice);
   return {
     value: diff,
     formatted: `${diff > 0 ? "+" : ""}${diff.toLocaleString()}$`,
@@ -145,7 +145,7 @@ export default function CarResults({ results }: Props) {
       {/* Список машин */}
       <div ref={listRef} className="grid">
         {paginatedResults.map((car) => {
-          const diff = getPriceDiff(car.price, car.marketPriceDeviation);
+          const diff = getPriceDiff(car.price, car.marketPrice);
           return (
             <div
               key={car.id}

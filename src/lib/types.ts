@@ -3,11 +3,12 @@ export type Model = { id: number; name: string };
 export type Region = { id: number; name: string };
 
 export type Car = {
+  marketPrices(price: number, marketPrice: number): unknown;
   id: number;
   title: string;
   year: number;
   price: number;
-  marketPriceDeviation: number;
+  marketPrice: number;
   mileage: number;
   engineVolume: number;
   gearbox: number;
