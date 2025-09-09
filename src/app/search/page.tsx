@@ -100,7 +100,11 @@ function SearchContent() {
     if (paramsObj.transfer) {
       filters.transfer = Boolean(paramsObj.transfer);
     }
-    if (paramsObj.state) {
+    // if (paramsObj.state) {
+    //   filters.state = Number(paramsObj.state);
+    // }
+
+    if (paramsObj.state && paramsObj.state !== "all") {
       filters.state = Number(paramsObj.state);
     }
 

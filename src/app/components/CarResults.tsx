@@ -145,7 +145,7 @@ export default function CarResults({ results }: Props) {
       {/* Список машин */}
       <div ref={listRef} className="grid">
         {paginatedResults.map((car) => {
-          const diff = getPriceDiff(car.price, car.marketPrice);
+          const diff = getPriceDiff(car.price, car.marketPriceDeviation);
           return (
             <div
               key={car.id}

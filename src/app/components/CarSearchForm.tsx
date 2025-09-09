@@ -290,7 +290,8 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
 
     if (selectedPaint !== "all") data.paint = selectedPaint;
     if (selectedTransfer !== "all") data.transfer = selectedTransfer;
-    if (selectedState !== "all") data.state = [selectedState];
+    // if (selectedState !== "all") data.state = [selectedState];
+    if (selectedState !== "all") data.state = selectedState;
 
     onSubmit(data);
 
@@ -316,7 +317,7 @@ export const CarSearchForm: React.FC<CarSearchFormProps> = ({ onSubmit }) => {
     if (data.paint !== undefined) params.set("paint", String(data.paint));
     if (data.transfer !== undefined)
       params.set("transfer", String(data.transfer));
-    if (data.state) params.set("state", data.state.join(","));
+    if (data.state !== undefined) params.set("state", String(data.state));
     if (data.period) params.set("period", String(data.period));
     if (data.includeDealers) params.set("includeDealers", "true");
     if (data.includeBanned) params.set("includeBanned", "true");

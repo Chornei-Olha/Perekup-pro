@@ -193,9 +193,9 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
       sold: fd.get("sold") === "on",
       includeDealers: fd.get("includeDealers") === "on",
       includeBanned: fd.get("includeBanned") === "on",
-      state: stateValues.length ? stateValues : undefined,
+      // state: stateValues.length ? stateValues : undefined,
+      state: stateValues.length ? stateValues[0] : undefined,
 
-      // state: fd.get("state") ? Number(fd.get("state")) : undefined,
       marketPriceDeviation: Number(fd.get("deviation")) || 0,
       period:
         selectedPeriod.id !== 0
@@ -416,57 +416,6 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
             />
           </div>
 
-          {/* <div className="space-y-1">
-            <label>
-              <input
-                name="paint"
-                type="checkbox"
-                defaultChecked={initialValues?.paint}
-                className="mr-2"
-              />{" "}
-              Крашенные
-            </label>
-            <br />
-            <label>
-              <input
-                name="transfer"
-                type="checkbox"
-                defaultChecked={initialValues?.transfer}
-                className="mr-2"
-              />{" "}
-              Пригнанные
-            </label>
-            <br />
-            <label>
-              <input
-                name="sold"
-                type="checkbox"
-                defaultChecked={initialValues?.sold}
-                className="mr-2"
-              />{" "}
-              Проданные
-            </label>
-            <br />
-            <label>
-              <input
-                name="includeDealers"
-                type="checkbox"
-                defaultChecked={initialValues?.includeDealers}
-                className="mr-2"
-              />{" "}
-              Дилеры
-            </label>
-            <br />
-            <label>
-              <input
-                name="includeBanned"
-                type="checkbox"
-                defaultChecked={initialValues?.includeBanned}
-                className="mr-2"
-              />{" "}
-              Заблокированные
-            </label>
-          </div> */}
           <div className="space-y-1">
             <label>
               <input
@@ -489,7 +438,7 @@ const CarFilterForm = ({ handleAddFilter, initialValues }: Props) => {
                   type="checkbox"
                   name="state"
                   value={id}
-                  defaultChecked={initialValues?.state?.includes(id)}
+                  defaultChecked={initialValues?.state === id}
                 />
                 <span>{label}</span>
               </div>
